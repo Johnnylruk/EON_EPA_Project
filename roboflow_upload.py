@@ -1,7 +1,8 @@
 from roboflow import Roboflow
 import os
-from roboflow_connection import get_roboflow_key, roboflow_login_connection, connect_to_roboflow_workspace
+from roboflow_connection import roboflow_connection_utility, connect_to_roboflow_workspace
 
+roboflow_connection = roboflow_connection_utility()
 
 def import_image_to_roboflow(image_directory_path: str, project_connection: Roboflow):
     '''This function is going to be responsible to import our dataset on Roboflow environment'''
@@ -16,8 +17,11 @@ def import_image_to_roboflow(image_directory_path: str, project_connection: Robo
     print(f'You have uploaded a total of {count_images}')
     print('Finished operations with Roboflow.')
 
-roboflow_token = get_roboflow_key('roboflow_app_settings.env')
-roboflow_connection = roboflow_login_connection(roboflow_token)
 
-workspace_connection = connect_to_roboflow_workspace('epaproject', 'ppe-identification', roboflow_connection)
+workspace_connection = connect_to_roboflow_workspace(
+    roboflow_connection['workspace_name'], 
+    roboflow_connection['project_name'], 
+    roboflow_connection['roboflow_login']
+    )
+
 import_image_to_roboflow('images', workspace_connection)

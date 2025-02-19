@@ -47,3 +47,20 @@ def get_roboflow_workflow_name_list(workflow_response: Roboflow) -> dict:
         for pos, workflow in enumerate(workflow_response['workflows']):
             workflow_list[f'workflow_{pos + 1}'] = workflow['name']
     return workflow_list
+
+def roboflow_connection_utility() -> dict:
+    '''This is responsible to call all connections'''
+    roboflow_token = get_roboflow_key('roboflow_app_settings.env')
+    roboflow_connection = roboflow_login_connection(roboflow_token)
+    roboflow_project_list = roboflow_connection.workspace()
+    workflow_connection_response = get_roboflow_workflow_response(roboflow_project_list.url, roboflow_token)
+
+    roboflow_utility_connection_dict = {
+        'api_token' : roboflow_token,
+        'roboflow_login': roboflow_connection,
+        'workspace_name': roboflow_project_list.url,
+        'connection_response': workflow_connection_response,
+        'project_name': roboflow_project_list.project_list[0]['name'].lower()
+    }
+
+    return roboflow_utility_connection_dict

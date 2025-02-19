@@ -1,23 +1,20 @@
 from inference_sdk import InferenceHTTPClient
-from roboflow_connection import get_roboflow_key, roboflow_login_connection, get_roboflow_workflow_response, get_roboflow_workflow_name_list
+from roboflow_connection import roboflow_connection_utility, get_roboflow_workflow_name_list
 from roboflow_workflow_pipeline_rules import workflow_rules_dict
 
-roboflow_token = get_roboflow_key('roboflow_app_settings.env')
-roboflow_connection = roboflow_login_connection(roboflow_token)
-roboflow_workspace_name = roboflow_connection.workspace().url
-workflow_connection_response = get_roboflow_workflow_response(roboflow_workspace_name, roboflow_token)
+roboflow_connection = roboflow_connection_utility()
 
-           
+
 roboflow_client = InferenceHTTPClient(
     api_url='https://detect.roboflow.com',
-    api_key=roboflow_token
+    api_key=roboflow_connection['api_token']
 )
 
 def run_roboflow_workflow(roboflow_client: InferenceHTTPClient, workflow_rules_dict: dict, workflow_response: dict,workspace_name: str, images: str) -> list:
 
     get_workflows = get_roboflow_workflow_name_list(workflow_response)
     for workflow in get_workflows:
-        print(f'For workflow {get_workflows[workflow]}, please type {workflow} for select this workflow')
+        print(f'{workflow}: {get_workflows[workflow]}')
         
     while True:
         select_workflow = str(input(f'Please, type a workflow name from the list above: ')).strip().lower()
@@ -35,7 +32,13 @@ def run_roboflow_workflow(roboflow_client: InferenceHTTPClient, workflow_rules_d
 
     return workflow
 
-run_roboflow_workflow(roboflow_client, workflow_rules_dict,workflow_connection_response,roboflow_workspace_name,'PPE_Test_Image.jpg')
+run_roboflow_workflow(
+    roboflow_client, 
+    workflow_rules_dict,
+    roboflow_connection['connection_response'],
+    roboflow_connection['workspace_name'],
+    'PPE_Test_Image.jpg'
+    )
 
 
 
