@@ -8,12 +8,15 @@ roboflow_response = get_roboflow_workflow_response(roboflow_workspace_name, robo
 
 workflow_small_objects_detection = {
     'name' : roboflow_response['workflows'][0]['name'],
-    'connection': roboflow_response['workflows'][0]['uct-count-arl'],
-    
+    'url': roboflow_response['workflows'][0]['url'],
 }
 
-workflow_small_objects_detection = {
-    'name' : roboflow_response['workflows'][0]['name'],
-    'connection': roboflow_response['workflows'][0]['uct-count-arl'],
-    
+workflow_detect_count_visualize = {
+    'name' : roboflow_response['workflows'][1]['name'],
+    'url': roboflow_response['workflows'][1]['url'],
+}
+
+workflow_rules_dict = {
+    'workflow_1': workflow_small_objects_detection,
+    'workflow_2': workflow_detect_count_visualize
 }
