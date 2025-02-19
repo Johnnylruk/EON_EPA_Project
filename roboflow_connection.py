@@ -1,5 +1,6 @@
 from roboflow import Roboflow
 import os
+import requests
 from dotenv import load_dotenv
 
 def get_roboflow_key(env_file_name: str) -> str:
@@ -30,3 +31,19 @@ def connect_to_roboflow_workspace(workspace_name: str, project_name: str, robofl
     project_connection = roboflow_login_connection.workspace(workspace_name).project(project_name)
     print(f'Successful connected to your {workspace_name} and project {project_name}')
     return project_connection
+
+def get_roboflow_workflow_response(workspace_name, api_token):
+    endpoint_url = "https://api.roboflow.com/"
+    endpoint = f"{endpoint_url}{workspace_name}/workflows?api_key={api_token}"
+    response = requests.get(endpoint)
+    response = response.json()
+    return response
+
+def get_roboflow_workflow_name_list(workflow_response: Roboflow) -> dict:
+    '''THis function is for get workflow list to easy identify which one is needed'''
+
+    workflow_list = dict()
+    if workflow_response['status'] == 'ok':
+        for pos, workflow in enumerate(workflow_response['workflows']):
+            workflow_list[f'workflow_{pos + 1}'] = workflow['name']
+    return workflow_list

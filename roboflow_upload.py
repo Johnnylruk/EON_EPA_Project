@@ -18,5 +18,6 @@ def import_image_to_roboflow(image_directory_path: str, project_connection: Robo
 
 roboflow_token = get_roboflow_key('roboflow_app_settings.env')
 roboflow_connection = roboflow_login_connection(roboflow_token)
+
 workspace_connection = connect_to_roboflow_workspace('epaproject', 'ppe-identification', roboflow_connection)
 import_image_to_roboflow('images', workspace_connection)
