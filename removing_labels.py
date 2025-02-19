@@ -8,12 +8,12 @@ dir_list = os.listdir(base_path)
 
 keep_classl_list = ['0','7','5']
 
-def read_file(file_to_read: list, base_file_path: str):
+def read_file(file_to_read: str, base_file_path: str):
     file_path = os.path.join(base_file_path, file_to_read)
     if os.path.isfile(file_path):
         with open(file_path, 'r') as file:
-            read_file = file.read()
-    return read_file
+            read_file_name = file.read()
+    return read_file_name
 
 def split_file(file_to_split: str, list_of_label_classes: list) -> list:
     split_file = file_to_split.split('\n')
@@ -47,6 +47,7 @@ def save_all_transformed_files(files_to_be_saved: list, base_path: str):
         save_transformed_file(splited_file, base_path, 'transformed_files', file)
     
 save_all_transformed_files(dir_list, base_path)
+
 
 
 

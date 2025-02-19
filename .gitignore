@@ -1,3 +1,9 @@
 .venv
 .txt
 *.txt
+.png
+*.png
+.jpg
+*.jpg
+.env
+*.env
