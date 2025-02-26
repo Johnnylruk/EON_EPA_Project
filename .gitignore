@@ -7,3 +7,5 @@
 *.jpg
 .env
 *.env
+.mov
+*mov

@@ -47,7 +47,6 @@ def save_images_after_decode(decoded_image_list: list):
 
     for pos, image in enumerate(decoded_image_list):
         open_image = Image.open(BytesIO(image))
-        print(open_image)
         open_image.save(f'image_{pos + 1}_with_label.jpg')
 
 images_list = ['PPE_Test_Image.jpg','PPE_Test_Image_2.jpg'] # Remind to myself to change it to a path
