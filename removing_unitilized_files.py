@@ -1,11 +1,12 @@
 import os
 
 label_base_path = 'labels'
+transformed_label_path = f'{label_base_path}\\transformed_files'
 image_base_path = 'images'
 transformed_dir_list = os.listdir(f'{label_base_path}\\transformed_files')
 image_dir = os.listdir(image_base_path)
 
-keep_classl_list = ['0','7','5']
+#keep_classl_list = ['1','3','5','8','12']
 
 def list_all_empty_files(directory_files_list: list, base_path):
     empty_files = []
@@ -34,9 +35,10 @@ def remove_ununsed_images(list_of_empty_files: list, list_of_images: list) -> li
             os.remove(image_path)
         else:
             updates_list_of_images.append(image)
-    return updates_list_of_images
+    return 
 
-list_of_empty_files = list_all_empty_files(transformed_dir_list, label_base_path)
+
+list_of_empty_files = list_all_empty_files(transformed_dir_list, transformed_label_path)
 get_all_images_from_file = get_all_images(image_dir)
 
 remove_ununsed_images(list_of_empty_files, get_all_images_from_file)

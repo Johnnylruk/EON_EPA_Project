@@ -6,7 +6,7 @@ import os
 base_path = 'labels'
 dir_list = os.listdir(base_path)
 
-keep_classl_list = ['0','7','5']
+keep_classl_list = ['3','5','8','12','15']
 
 def read_file(file_to_read: str, base_file_path: str):
     file_path = os.path.join(base_file_path, file_to_read)
