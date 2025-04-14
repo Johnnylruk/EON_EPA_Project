@@ -37,8 +37,15 @@ def remove_ununsed_images(list_of_empty_files: list, list_of_images: list) -> li
             updates_list_of_images.append(image)
     return 
 
+def remove_empty_files_from_folder(list_of_empty_files: list, base_path):
+    for file in list_of_empty_files:
+        file_path = os.path.join(base_path, file)
+        os.remove(file_path)
 
 list_of_empty_files = list_all_empty_files(transformed_dir_list, transformed_label_path)
-get_all_images_from_file = get_all_images(image_dir)
+##### This is for the process of removing images if do not have any class that we need ######
+# get_all_images_from_file = get_all_images(image_dir)
+# remove_ununsed_images(list_of_empty_files, get_all_images_from_file)
 
-remove_ununsed_images(list_of_empty_files, get_all_images_from_file)
+### This is for deleting the empty files, ONLY DO THIS PROCCESS AFTER REMOVE THE IMAGES ####
+#remove_empty_files_from_folder(list_of_empty_files, transformed_label_path)

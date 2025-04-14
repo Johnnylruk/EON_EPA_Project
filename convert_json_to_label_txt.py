@@ -6,7 +6,7 @@ import os
 data = {
     "annotations": {
         "objects": {
-            "converted": "{\"key\":\"yt-hAWOY80H22M-0105_jpg\",\"width\":640,\"height\":640,\"boxes\":[{\"id\":\"1\",\"label\":\"3\",\"x\":\"373.50\",\"y\":\"146.50\",\"width\":\"69.00\",\"height\":\"59.00\"},{\"id\":\"2\",\"label\":\"5\",\"x\":\"389.50\",\"y\":\"374.50\",\"width\":\"135.00\",\"height\":\"531.00\"},{\"id\":\"3\",\"label\":\"8\",\"x\":\"388.00\",\"y\":\"326.50\",\"width\":\"112.00\",\"height\":\"191.00\"}]}",
+            "converted": "{\"key\":\"00022_jpg.rf.cbbab30cf0acb6bf9bb500adc05503c9.jpg\",\"boxes\":[{\"label\":\"3\",\"x\":266.5,\"y\":434,\"width\":196,\"height\":217},{\"label\":\"4\",\"x\":261,\"y\":190,\"width\":67,\"height\":65},{\"label\":\"2\",\"x\":273,\"y\":399,\"width\":240,\"height\":463}],\"width\":640,\"height\":640}",
         }
     }
 }
@@ -50,3 +50,6 @@ def save_annotation_to_text_file(file_to_save: str, json_roboflow_raw_file_txt, 
 filtered_json = json_file_to_convert(data)
 formatted_json = format_json_file(filtered_json)
 save_annotation_to_text_file(formatted_json, data, base_path, 'transformed_labels_files')
+
+
+
