@@ -4,21 +4,26 @@ import sys
 import os
 
 # Caffe Model txt model path
-prototxt_path = "weights/deploy.prototxt.txt"
+prototxt_path = "model_location/file_specification.txt"
 
 # Caffe Model Line
-model_path = "weights/res10_300x300_ssd_iter_140000_fp16.caffemodel"
+model_path = "model_location/blurry_model.caffemodel"
 
 # Load Caffe Model
 model = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
 
-# Pass Video path as argument
-image_path = sys.argv[1]
+# Pass Image path as argument
+# image_path = sys.argv[1]
+
+image_base_path = 'images'
+
+images_dir = os.listdir(image_base_path)
+image_path = os.path.join(image_base_path, images_dir[0])
+
 
 output_directory = "output/"
 
 os.makedirs(output_directory, exist_ok=True)
-
 # Load the image to be tested
 image = cv2.imread(image_path)
 
@@ -34,7 +39,7 @@ output_image_path = os.path.join(output_directory, f"{name}_blurred{extension}")
 # Get the width and height of the image
 height, width = image.shape[:2]
 
-# Gaussian blur kernel size depends on the width and height of the original image
+# Increase the blury effect
 kernel_width = (width // 3) | 1
 kernel_height = (height // 3) | 1
 # Process the image: resize and perform mean subtraction

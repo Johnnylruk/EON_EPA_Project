@@ -4,32 +4,32 @@ import time
 import sys
 import os
 
-# Jalur prototxt model Caffe
-prototxt_path = "weights/deploy.prototxt.txt"
+# Caffe Model txt model path
+prototxt_path = "model_location/file_specification.txt"
 
-# Jalur model Caffe
-model_path = "weights/res10_300x300_ssd_iter_140000_fp16.caffemodel"
+# Caffe Model Line
+model_path = "model_location/blurry_model.caffemodel"
 
-# memuat model Caffe
+# Load the Caffe model
 model = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
 
-# berikan video path sebagai argumen
+# Provide video path as an argument
 video_path = sys.argv[1]
 
 output_directory = "output/"
 
 os.makedirs(output_directory, exist_ok=True)
 
-# capture frames from video
+# Capture frames from video
 capture = cv2.VideoCapture(video_path)
 
-# Ekstrak nama file dari image_path
+# Extract filename from video_path
 filename = os.path.basename(video_path)
 
-# Memisahkan nama file dan ekstensi
+# Separate filename and extension
 the_name, extension = os.path.splitext(filename)
 
-# it creates a four-character code (fourcc) used to specify the video codec
+# Create a four-character code (fourcc) used to specify the video codec
 fourcc = cv2.VideoWriter_fourcc(*"XVID")
 video, image = capture.read()
 print(image.shape)
@@ -40,51 +40,50 @@ output_video_path = cv2.VideoWriter(
     (image.shape[1], image.shape[0]),
 )
 
-while True:  # forever looping
+while True:  # Forever looping
     start = time.time()
     captured, image = capture.read()
 
-    # get width and height of the image
+    # Get width and height of the image
     if not captured:
         break
     h, w = image.shape[:2]
-    kernel_width = (w // 7) | 1
-    kernel_height = (h // 7) | 1
+    kernel_width = (w // 3) | 1
+    kernel_height = (h // 3) | 1
 
-    # preprocess the image: resize and performs mean subtraction
+    # Preprocess the image: resize and perform mean subtraction
     blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300), (104.0, 177.0, 123.0))
-    # set the image into the input of the neural network
+    # Set the image into the input of the neural network
     model.setInput(blob)
-    # perform inference and get the result
+    # Perform inference and get the result
     output = np.squeeze(model.forward())
     for i in range(0, output.shape[0]):
         confidence = output[i, 2]
-        # get the confidence
-        # if confidence is above 40%, then blur the bounding box (face)
+        # Get the confidence
+        # If confidence is above 40%, then blur the bounding box (face)
         if confidence > 0.4:
-            # get the surrounding box cordinates and upscale them to original image
+            # Get the surrounding box coordinates and upscale them to original image
             box = output[i, 3:7] * np.array([w, h, w, h])
-            # convert to integers
+            # Convert to integers
             start_x, start_y, end_x, end_y = box.astype(np.int64)
-            # get the face image
+            # Get the face image
             face = image[start_y:end_y, start_x:end_x]
-            # apply gaussian blur to this face
+            # Apply Gaussian blur to this face
             face = cv2.GaussianBlur(face, (kernel_width, kernel_height), 0)
-            # put the blurred face into the original image
+            # Put the blurred face into the original image
             image[start_y:end_y, start_x:end_x] = face
 
-    # mengatur lebar & tinggi gambar di window
+    # Set width & height of the image in the window
     width = 480
     height = 640
-
-    # mengatur ukuran jendela sesuai dengan gambar asli
+    # Set window size according to the original image
     cv2.namedWindow("The results", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("The results", width, height)
 
-    # menampilkan hasilnya
+    # Display the result
     cv2.imshow("The results", image)
 
-    # tombol close jika tekan "q"
+    # Close the window if "q" is pressed
     if cv2.waitKey(1) == ord("q"):
         break
     time_elapsed = time.time() - start
