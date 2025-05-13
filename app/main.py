@@ -48,7 +48,7 @@ def get_camera_image() -> str:
         
         # -------- DEPLOY MOST RECENT MODEL TO ROBOFLOW ----------- #
         #check_model_update()
-        application_service.log_exceptions()
+        #application_service.log_exceptions()
        
         # -------- SEND TO ROBOFLOW ------------------------------- #
         # send image to roboflow using image variable temporarily

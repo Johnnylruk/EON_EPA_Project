@@ -9,7 +9,7 @@ camera_services = CameraServices()
 
 class ImageAdjustmentService():
     
-    def check_valid_path():
+    def check_valid_path(self):
         """
             @params: None
 
@@ -36,7 +36,7 @@ class ImageAdjustmentService():
             return e
         
           
-    def setup_caffe_model(prototxt_path, model_path, image_file):
+    def setup_caffe_model(self, prototxt_path, model_path, image_file):
         """
             @params: str, str, MatLike
 
@@ -63,7 +63,7 @@ class ImageAdjustmentService():
             # application logs
             return e
         
-    def process_image_as_blob(model, image_file):
+    def process_image_as_blob(self, model, image_file):
         """
             @params: MatLike
                 - Receives a matrix object representing the image in memory
@@ -86,7 +86,7 @@ class ImageAdjustmentService():
             return e
 
        
-    def apply_blur_effect(output, height, width, kernel_height, kernel_width, image_file):
+    def apply_blur_effect(self, output, height, width, kernel_height, kernel_width, image_file):
         # Loop with parameters
         for i in range(0, output.shape[0]):
             face_accuracy = output[i, 2]
