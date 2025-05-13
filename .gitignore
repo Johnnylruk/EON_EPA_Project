@@ -1,0 +1,11 @@
+./venv
+.png
+*.png
+.jpg
+*.jpg
+.env
+*.env
+.mov
+*mov
+.pt
+*.pt
