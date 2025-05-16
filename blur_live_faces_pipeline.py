@@ -7,8 +7,10 @@ prototxt_path = "model_location/file_specification.txt"
 model_path = "model_location/blurry_model.caffemodel"
 
 def blur_real_time_faces(caffe_config_txt_file: str, caffe_model_file):
+    
     model = cv2.dnn.readNetFromCaffe(caffe_config_txt_file, caffe_model_file)
     cap = cv2.VideoCapture(0)
+    
     while True:
         try:
             start = time.time()
@@ -16,7 +18,7 @@ def blur_real_time_faces(caffe_config_txt_file: str, caffe_model_file):
             if not live:
                 print("Failed to capture image")
                 break
-
+            
             h, w = image.shape[:2]
             kernel_width = (w // 7) | 1
             kernel_height = (h // 7) | 1

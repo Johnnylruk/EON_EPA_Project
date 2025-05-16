@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import sys
 import os
+from removing_unitilized_files import get_all_images
 
 # Caffe Model txt model path
 prototxt_path = "model_location/file_specification.txt"
@@ -19,7 +20,6 @@ image_base_path = 'images'
 
 images_dir = os.listdir(image_base_path)
 image_path = os.path.join(image_base_path, images_dir[0])
-
 
 output_directory = "output/"
 
