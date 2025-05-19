@@ -5,24 +5,26 @@ class MessageServices():
     def create_message(self, result):
         predictions_list = result[0]["predictions"]["predictions"]
         output_image = result[0]["output_image"]
-
-        confidence = predictions_list[0]["confidence"]
-        print(confidence)
+        print(len(predictions_list))
 
         predictions = list()
         for item in predictions_list:
-            prediction_model = Predictions()
-            prediction_model.confidence = predictions_list[item]["confidence"]
-            prediction_model.detection_id = predictions_list[item]["detection_id"]
-            prediction_model.violation_id = predictions_list[item]["class_id"]
-            prediction_model.violation = predictions_list[item]["class"]
+
+            confidence = item["confidence"]
+            detection_id = item["detection_id"]
+            violation_id = item["class_id"]
+            violation = item["class"]
+
+            prediction_model = Predictions(
+                confidence,
+                detection_id,
+                violation_id,
+                violation
+            )
+            
             predictions.append(prediction_model)
 
-
-        result_model = MessageResult()
-        result_model.violations = predictions
-        result_model.output_image = output_image
-        
+        result_model = MessageResult(predictions, output_image)
 
         # ## encryption here
         
