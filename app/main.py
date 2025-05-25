@@ -26,7 +26,7 @@ application_service = ApplicationLogServices()
 ##____________________ GET VIOLATION DATA _________________________##
    
 @app.post("/get-violation-data")
-def get_camera_image() -> str: 
+def get_violation_data() -> str: 
         """ 
             @accepts - string base64
             @returns - string json
@@ -34,9 +34,7 @@ def get_camera_image() -> str:
             Gets image from reo link cloud and sends it to roboflow cloud storage
             to be processed by AI model
          """
-        
-        
-                
+         
         # -------- GET IMAGE FROM CAMERA -------------------------- #
         # TEMPORARY DELETE WHEN REO LINK CONNECTED  
         image_from_local = camera_services.get_local_image()
@@ -68,7 +66,7 @@ def get_camera_image() -> str:
 
 ######### READ ME ##########
 ## This is called for testing the front end will call this as an endpoint
-get_camera_image()
+get_violation_data()
 
 
 ##____________________ UPDATE AI MODEL _________________________##

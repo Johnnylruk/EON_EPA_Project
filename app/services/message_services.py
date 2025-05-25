@@ -1,12 +1,21 @@
-from app.data_classes.message_result_modal import MessageResult, Predictions
+from app.data_classes.message_result_modal import MessageResult, Predictions, Helmet, HiVis
 
 
 class MessageServices():
     def create_message(self, result):
         predictions_list = result[0]["predictions"]["predictions"]
         output_image = result[0]["output_image"]
-        print(len(predictions_list))
 
+        predictions = self.create_prediction_model(predictions_list)
+        (helmet_predictions, hi_vis_predictions )= self.filtered_predictions(predictions)
+        result_model = MessageResult(helmet_predictions, hi_vis_predictions, output_image)
+
+        # ## encryption here
+        
+        return result_model
+
+
+    def create_prediction_model(self, predictions_list):
         predictions = list()
         for item in predictions_list:
 
@@ -23,10 +32,11 @@ class MessageServices():
             )
             
             predictions.append(prediction_model)
+        return predictions
 
-        result_model = MessageResult(predictions, output_image)
-
-        # ## encryption here
-        
-        return result_model
+    def filtered_predictions(predictions):
+        print(predictions)
+        helmet_predictions = Helmet(
+            violations=predictions
+        )
     

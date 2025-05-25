@@ -1,9 +1,10 @@
 import os
-
+import csv
 class ApplicationLogServices():
 
     def create_exception_logs(self):
         os.mkdir("application_logs")
+        os.write("new_file.txt", )
         
          
 
