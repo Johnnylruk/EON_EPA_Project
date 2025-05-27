@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug FastAPI (uvicorn)",
+            "name": "Project Falcon",
             "type": "python",
             "request": "launch",
             "module": "uvicorn",
