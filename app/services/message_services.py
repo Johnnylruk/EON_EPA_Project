@@ -1,5 +1,7 @@
 from app.data_classes.message_result_modal import MessageResult, Predictions, Helmet, HiVis
+from app.services.roboflow_connection_services import RoboflowServices
 
+roboflow_services = RoboflowServices()
 
 class MessageServices():
     def create_message(self, result):
@@ -11,7 +13,7 @@ class MessageServices():
             output_image = result[0]["output_image"]
 
             predictions = self.create_prediction_model(predictions_list)
-            (helmet_predictions, hi_vis_predictions )= self.filtered_predictions(predictions)
+            (helmet_predictions, hi_vis_predictions) = self.filtered_predictions(predictions)
             result_model = MessageResult(helmet_predictions, hi_vis_predictions, output_image)
                         
             # ## encryption here
@@ -44,23 +46,23 @@ class MessageServices():
             return e
 
     def filtered_predictions(self, predictions):
-        # check if class exists
-        #  get classes from roboflow
-        unique_strings = list(dict.fromkeys(predictions))
-        unique_strings.sort()
+        try:
+            get_class_names = roboflow_services.get_roboflow_classes()
+            print(get_class_names)
 
+            helmet_violations = [i for i in predictions if i["violations"] == "no-helmet"]
 
-        helmet_violations = [i for i in predictions if i["violations"] == "no-helmet"]
+            helmet_predictions = Helmet(
+                violations=helmet_violations,
+                amount=len(helmet_violations)
+            )
 
-        helmet_predictions = Helmet(
-            violations=helmet_violations,
-            amount=len(helmet_violations)
-        )
+            hi_vis_violations = [i for i in predictions if i["violations"] == "no-jacket"]
 
-        hi_vis_violations = [i for i in predictions if i["violations"] == "no-jacket"]
-
-        hi_vis_predictions = HiVis(
-            violations=hi_vis_violations,
-            amount=len(hi_vis_violations)
-        )
-        return (helmet_predictions, hi_vis_predictions)
+            hi_vis_predictions = HiVis(
+                violations=hi_vis_violations,
+                amount=len(hi_vis_violations)
+            )
+            return (helmet_predictions, hi_vis_predictions)
+        except Exception as e:
+            return e

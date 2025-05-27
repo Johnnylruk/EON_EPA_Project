@@ -15,6 +15,7 @@ workflow = WorkflowService()
 camera_services = CameraServices()
 roboflow_connection = roboflow_services.roboflow_connection_utility()
 roboflow_client = InferenceHTTPClient(
+      
         api_url='https://detect.roboflow.com', 
         api_key=roboflow_connection['api_token']
     )
@@ -71,15 +72,15 @@ get_violation_data()
 
 ##____________________ UPDATE AI MODEL _________________________##
 
-def check_model_update():
-    """
-        @params: None
-        @returns: None
-        @exception: Exception
+# def check_model_update():
+#     """
+#         @params: None
+#         @returns: None
+#         @exception: Exception
 
-        Checks if local model file has been updated and then sends a new 
-        model to be used in roboflow workflow
-    """
-    roboflow_services.deploy_roboflow_model()
+#         Checks if local model file has been updated and then sends a new 
+#         model to be used in roboflow workflow
+#     """
+#     roboflow_services.deploy_roboflow_model()
 
-
+# check_model_update()
