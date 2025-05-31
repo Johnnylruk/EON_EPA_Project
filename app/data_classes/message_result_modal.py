@@ -5,7 +5,11 @@ class Predictions():
     confidence: int
     violation: str
     violation_id: int
-    detection_id: int  
+    detection_id: int
+    width: int
+    height: int
+    x: float
+    y: float  
 
 @dataclass 
 class Helmet():

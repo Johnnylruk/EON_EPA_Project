@@ -36,12 +36,20 @@ class MessageServices():
                 violation = item["class"]
                 violation_id = item["class_id"]
                 detection_id = item["detection_id"]
+                width = item["width"]
+                height = item["height"]
+                x = item["x"]
+                y = item["y"]
                 
                 prediction_model = Predictions(
                     confidence,
                     violation,
                     violation_id,
                     detection_id,
+                    width,
+                    height,
+                    x,
+                    y
                 )
                 
                 predictions.append(prediction_model)
@@ -51,29 +59,19 @@ class MessageServices():
 
     def get_violation_from_predictions(self, predictions) -> Object_Violations:
         try:
-            violations = {
-                "5": Person,
-                "12": Helmet,
-                "15": HiVis
-            }
-            object_violations = self.map_classes_to_model(predictions, violations)   
+            object_violations = self.map_classes_to_model(predictions)   
             return object_violations
               
         except Exception as e:
             return e
     
-    def map_classes_to_model(self, predictions, violations):
+    def map_classes_to_model(self, predictions):
         
-        for item in violations:
-            match item.value:
-                case Helmet():
-                    helmet_predictions = [i for i in predictions if i.violation == item.key]
+        helmet_predictions = [i for i in predictions if i.violation == "12"]
 
-                case HiVis():
-                    hi_vis_predictions = [i for i in predictions if i.violation == item.key]
-                
-                case Person():
-                    person_predictions = [i for i in predictions if i.violation == item.key]
+        hi_vis_predictions = [i for i in predictions if i.violation == "15"]
+        
+        person_predictions = [i for i in predictions if i.violation == "5"]
 
         object_violations = Object_Violations(
             helmet_violation=helmet_predictions,
@@ -85,11 +83,46 @@ class MessageServices():
 
     def map_to_person_detected(self, object_violations, person_predictions) -> Person:
         try:
-            for person in person_predictions:
-                person_detected = Person(
-                    violations=object_violations
-                )
+            for object in object_violations.helmet_violation:
+                for person in person_predictions:  
+
+                    ## PERSON CLASS BOUNDING BOX CALC
+                    (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area) = self.person_class_bounding_box_calc(person)
+                     
+                    ## OBJECT CLASS AREA CALC
+                    object_box_area = self.object_class_area_calc(object)
+
+                    if object.x >= person_x_min and object.x <= person_x_max and object.y >= person_y_min and object.y <= person_y_max and object_box_area <= person_box_area:   
+                        person_detected = Person(
+                            violations=object_violations
+                        )
             return person_detected
         except Exception as e:
             return e
-        
+
+
+    def person_class_bounding_box_calc(self, person):
+        person_box_width = person.width
+        person_box_height = person.height
+        person_x = person.x
+        person_y = person.y
+
+        person_width = person_box_width / 2
+        person_x_min = person_x - person_width
+        person_x_max = person_x + person_width
+
+        person_height = person_box_height / 2
+        person_y_min = person_y - person_height
+        person_y_max = person_y + person_height
+
+        person_box_area = person_box_height * person_box_width
+
+        return (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area)
+
+
+    def object_class_area_calc(self, object):
+        object_width = object.width
+        object_height = object.height
+
+        object_box_area = object_height * object_width
+        return object_box_area
