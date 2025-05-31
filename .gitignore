@@ -1,6 +1,4 @@
-.venv
-.txt
-*.txt
+./venv
 .png
 *.png
 .jpg
@@ -9,3 +7,5 @@
 *.env
 .mov
 *mov
+.pt
+*.pt
