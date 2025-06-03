@@ -67,7 +67,7 @@ def get_violation_data() -> str:
 
 ######### READ ME ##########
 ## This is called for testing the front end will call this as an endpoint
-get_violation_data()
+# get_violation_data()
 
 
 ##____________________ UPDATE AI MODEL _________________________##
