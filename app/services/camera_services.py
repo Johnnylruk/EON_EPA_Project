@@ -2,7 +2,8 @@ import base64
 import cv2
 from PIL import Image
 import numpy as np
-
+from data_retriever import retrieve_footage
+from image_extraction import extract_key_frames
 class CameraServices():
 
 
@@ -30,7 +31,16 @@ class CameraServices():
 
     ##----------- BEGIN CAMERA CONNECTION FUNCTIONS ---------##
 
-    # >> Muhammad Code here
+
+    # Get video footage from reolink
+    filename = retrieve_footage()
+    print("Downloaded file:", filename)
+
+    # Extract the iamge frames from the footage
+    video_path = f"footage/{filename}"
+    frames = extract_key_frames(video_path)
+    print("Extracted frames:", frames)
+
 
     ##----------- END CAMERA CONNECTION FUNCTIONS -----------##
 
