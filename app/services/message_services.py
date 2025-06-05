@@ -67,15 +67,12 @@ class MessageServices():
     
     def map_classes_to_model(self, predictions):
         
-        helmet_predictions = [i for i in predictions if i.violation == "12"]
-
-        hi_vis_predictions = [i for i in predictions if i.violation == "15"]
+        object_predictions = [i for i in predictions if i.violation == "12" and  i.violation == "15"]
         
         person_predictions = [i for i in predictions if i.violation == "5"]
 
         object_violations = Object_Violations(
-            helmet_violation=helmet_predictions,
-            hi_vis_violation=hi_vis_predictions
+            object_predictions=object_predictions
         )
         
         person_detected = self.map_to_person_detected(object_violations, person_predictions)
@@ -83,20 +80,29 @@ class MessageServices():
 
     def map_to_person_detected(self, object_violations, person_predictions) -> Person:
         try:
-            for object in object_violations.helmet_violation:
-                for person in person_predictions:  
+            people_detected = []
+            for person in person_predictions: 
+                objects_detected = []
+                for violation in object_violations:
+                            
+                            ## PERSON CLASS BOUNDING BOX CALC
+                            (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area) = self.person_class_bounding_box_calc(person)
+                            
+                            ## OBJECT CLASS AREA CALC
+                            object_box_area = self.object_class_area_calc(violation)
 
-                    ## PERSON CLASS BOUNDING BOX CALC
-                    (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area) = self.person_class_bounding_box_calc(person)
-                     
-                    ## OBJECT CLASS AREA CALC
-                    object_box_area = self.object_class_area_calc(object)
+                            is_x_within_bounds = violation.x >= person_x_min and violation.x <= person_x_max
+                            is_y_within_bounds = violation.y >= person_y_min and violation.y <= person_y_max
+                            is_object_area_valid = object_box_area <= person_box_area
 
-                    if object.x >= person_x_min and object.x <= person_x_max and object.y >= person_y_min and object.y <= person_y_max and object_box_area <= person_box_area:   
-                        person_detected = Person(
-                            violations=object_violations
-                        )
-            return person_detected
+                            if is_x_within_bounds and is_y_within_bounds and is_object_area_valid:
+                                detected_objects = objects_detected.append(violation)
+                                people = Person(
+                                    violation=detected_objects
+                                )
+                                people_detected.append(people)
+                                               
+            return people_detected
         except Exception as e:
             return e
 
