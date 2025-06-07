@@ -2,10 +2,13 @@ import base64
 import cv2
 from PIL import Image
 import numpy as np
-from data_retriever import retrieve_footage
-from image_extraction import extract_key_frames
-class CameraServices():
+from app.services.reo_link_video_services import Reo_Link_Services
+from app.services.reo_link_image_processing import Reo_Link_Image_Processing
 
+reo_link_services = Reo_Link_Services()
+reo_link_image_processing = Reo_Link_Image_Processing()
+
+class CameraServices():
 
     ##----------- BEGIN TESTING FUNCTIONS ---------------##
 
@@ -31,15 +34,25 @@ class CameraServices():
 
     ##----------- BEGIN CAMERA CONNECTION FUNCTIONS ---------##
 
-
-    # Get video footage from reolink
-    filename = retrieve_footage()
-    print("Downloaded file:", filename)
-
-    # Extract the iamge frames from the footage
-    video_path = f"footage/{filename}"
-    frames = extract_key_frames(video_path)
-    print("Extracted frames:", frames)
+    def get_reo_link_camera_footage(self):
+        try:
+            # Get video footage from reolink
+            video_file = reo_link_services.retrieve_footage()
+            print("Downloaded file:", video_file)
+            return video_file
+        except Exception as e:
+            return e
+        
+    def get_reo_link_images_frames(self):
+        try:
+            video_file = self.get_reo_link_camera_footage()
+            # Extract the iamge frames from the footage
+            video_path = f"footage/{video_file}"
+            frames = reo_link_image_processing.extract_key_frames(video_path)
+            print("Extracted frames:", frames)
+            return frames
+        except Exception as e:
+            return e
 
 
     ##----------- END CAMERA CONNECTION FUNCTIONS -----------##
