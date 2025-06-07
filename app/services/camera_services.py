@@ -1,4 +1,5 @@
 import base64
+import glob
 import cv2
 from PIL import Image
 import numpy as np
@@ -49,7 +50,7 @@ class CameraServices():
             # Extract the iamge frames from the footage
             video_path = f"footage/{video_file}"
             frames = reo_link_image_processing.extract_key_frames(video_path)
-            print("Extracted frames:", frames)
+
             return frames
         except Exception as e:
             return e

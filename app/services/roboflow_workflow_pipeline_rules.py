@@ -4,6 +4,8 @@ roboflow_services = RoboflowServices()
 
 roboflow_connection = roboflow_services.roboflow_connection_utility()
 
+x = roboflow_connection['connection_response']
+
 workflow_small_objects_detection = {
     'name' : roboflow_connection['connection_response']['workflows'][0]['name'],
     'url': roboflow_connection['connection_response']['workflows'][0]['url'],

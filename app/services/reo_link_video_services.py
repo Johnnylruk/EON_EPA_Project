@@ -9,7 +9,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 
 class Reo_Link_Services():
-    def retrieve_footage() -> str:
+    def retrieve_footage(self) -> str:
         """
         This is deisgned to retrieve the latest footage from Reolink 
         and store it in the footage folder (found in the root dir)

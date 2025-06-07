@@ -5,7 +5,8 @@ from app.services.roboflow_workflow_pipeline import WorkflowService
 from app.services.roboflow_workflow_pipeline_rules import workflow_rules_dict
 from app.services.camera_services import CameraServices
 from app.services.message_services import MessageServices
-from app.services.image_adjustment_service  import ImageAdjustmentService
+# from app.services.image_adjustment_service  import ImageAdjustmentService
+from app.services.image_adjustment_service import blur_face_images
 from app.services.application_logs_services import ApplicationLogServices
 
 app = FastAPI()
@@ -20,7 +21,7 @@ roboflow_client = InferenceHTTPClient(
         api_key=roboflow_connection['api_token']
     )
 message_services = MessageServices()
-image_adjustment = ImageAdjustmentService()
+# image_adjustment = ImageAdjustmentService()
 application_service = ApplicationLogServices()
 
 
@@ -38,11 +39,18 @@ def get_violation_data() -> str:
          
         # -------- GET IMAGE FROM CAMERA -------------------------- #
         # TEMPORARY DELETE WHEN REO LINK CONNECTED  
-        image_from_local = camera_services.get_local_image()
+        # image_from_local = camera_services.get_local_image()
+        image_from_reo = camera_services.get_reo_link_images_frames()
+
         #image = camera_services.take_image()
        
         # -------- BEGIN IMAGE BLURRING --------------------------- #
-        image = image_adjustment.blur_face_images(image_from_local)
+        blurred_imgs = []
+        for img in image_from_reo:
+            blurred_img = blur_face_images(img)
+            blurred_imgs.append(blurred_img)
+
+        print(blurred_imgs)
         
         
         # -------- DEPLOY MOST RECENT MODEL TO ROBOFLOW ----------- #
