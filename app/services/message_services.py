@@ -1,12 +1,11 @@
-from app.data_classes.message_result_modal import MessageResult, Predictions, Helmet, HiVis, Object_Violations, Person
+from app.data_classes.message_result_modal import MessageResult, Predictions, Person
 from app.services.roboflow_connection_services import RoboflowServices
-import numpy as np
 
 roboflow_services = RoboflowServices()
 
 
 class MessageServices():
-    def create_message(self, result):
+    def create_message(self, result) -> MessageResult:
         try:
             predictions_list = result[0]["predictions"]["predictions"]
             if not predictions_list:
@@ -15,9 +14,9 @@ class MessageServices():
             output_image = result[0]["output_image"]
 
             predictions = self.create_prediction_model(predictions_list)
-            person_detected = self.get_violation_from_predictions(predictions)
+            persons_detected = self.get_violation_from_predictions(predictions)
 
-            result_model = MessageResult(person_detected, output_image)
+            result_model = MessageResult(persons_detected, output_image)
                         
             # ## encryption here
             
@@ -27,7 +26,7 @@ class MessageServices():
             return e
     
     # try and use a mapping services
-    def create_prediction_model(self, predictions_list) -> list:
+    def create_prediction_model(self, predictions_list: list) -> list:
         try:
             predictions = list()
             for item in predictions_list:
@@ -57,7 +56,7 @@ class MessageServices():
         except Exception as e:
             return e
 
-    def get_violation_from_predictions(self, predictions) -> Object_Violations:
+    def get_violation_from_predictions(self, predictions: list) -> list[Person]:
         try:
             object_violations = self.map_classes_to_model(predictions)   
             return object_violations
@@ -65,20 +64,22 @@ class MessageServices():
         except Exception as e:
             return e
     
-    def map_classes_to_model(self, predictions):
+    def map_classes_to_model(self, predictions) -> list[Person]:
         
-        object_predictions = [i for i in predictions if i.violation == "12" and  i.violation == "15"]
-        
-        person_predictions = [i for i in predictions if i.violation == "5"]
+        object_predictions = [i for i in predictions if (
+                            i.violation == "12" or  
+                            i.violation == "15" or 
+                            i.violation == "3" or 
+                            i.violation == "8")]
 
-        object_violations = Object_Violations(
-            object_predictions=object_predictions
-        )
-        
-        person_detected = self.map_to_person_detected(object_violations, person_predictions)
-        return person_detected
+        person_predictions = [i for i in predictions if i.violation == "person"]
 
-    def map_to_person_detected(self, object_violations, person_predictions) -> Person:
+        persons_detected = self.map_to_person_detected(object_predictions, person_predictions)
+
+
+        return persons_detected
+
+    def map_to_person_detected(self, object_violations: list, person_predictions: list) -> list[Person]:
         try:
             people_detected = []
             for person in person_predictions: 
@@ -96,12 +97,15 @@ class MessageServices():
                             is_object_area_valid = object_box_area <= person_box_area
 
                             if is_x_within_bounds and is_y_within_bounds and is_object_area_valid:
-                                detected_objects = objects_detected.append(violation)
-                                people = Person(
-                                    violation=detected_objects
-                                )
-                                people_detected.append(people)
-                                               
+                                objects_detected.append(violation)
+                               
+                if len(objects_detected) > 0:
+                    people = Person(
+                        violations=objects_detected
+                    )
+                    people_detected.append(people)
+                       
+
             return people_detected
         except Exception as e:
             return e

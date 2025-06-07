@@ -11,10 +11,6 @@ class Predictions():
     x: float
     y: float  
 
-@dataclass
-class Object_Violations():
-    object_predictions: list
-
 @dataclass 
 class Person():
     violations: list

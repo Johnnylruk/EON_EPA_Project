@@ -65,11 +65,7 @@ def get_violation_data() -> str:
 
         return response_message
 
-######### READ ME ##########
-## This is called for testing the front end will call this as an endpoint
-# get_violation_data()
-
-
+get_violation_data()
 ##____________________ UPDATE AI MODEL _________________________##
 
 # def check_model_update():
