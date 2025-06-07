@@ -1,0 +1,11 @@
+path: C:/Users/Muhammad.Mamoon/Documents/PYTHON/robotest/LatestDataset
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+names:
+  0: 12
+  1: 15
+  2: 3
+  3: 5
+  4: 8
