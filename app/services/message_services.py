@@ -7,16 +7,20 @@ roboflow_services = RoboflowServices()
 class MessageServices():
     def create_message(self, result) -> MessageResult:
         try:
-            predictions_list = result[0]["predictions"]["predictions"]
+            predictions_list = []
+            for item in result:
+                for i in item:
+                    if i == "predictions":
+                        prediction = item[i]["predictions"]
+                        predictions_list.append(prediction)                      
+
             if not predictions_list:
                 return "No items in list"
-
-            output_image = result[0]["output_image"]
 
             predictions = self.create_prediction_model(predictions_list)
             persons_detected = self.get_violation_from_predictions(predictions)
 
-            result_model = MessageResult(persons_detected, output_image)
+            result_model = MessageResult(persons_detected)
                         
             # ## encryption here
             
@@ -29,16 +33,21 @@ class MessageServices():
     def create_prediction_model(self, predictions_list: list) -> list:
         try:
             predictions = list()
-            for item in predictions_list:
 
-                confidence = item["confidence"]
-                violation = item["class"]
-                violation_id = item["class_id"]
-                detection_id = item["detection_id"]
-                width = item["width"]
-                height = item["height"]
-                x = item["x"]
-                y = item["y"]
+            for item in predictions_list:
+                
+                if not item:
+                    print("No items in list")
+                    continue
+
+                confidence = item[0]["confidence"]
+                violation = item[0]["class"]
+                violation_id = item[0]["class_id"]
+                detection_id = item[0]["detection_id"]
+                width = item[0]["width"]
+                height = item[0]["height"]
+                x = item[0]["x"]
+                y = item[0]["y"]
                 
                 prediction_model = Predictions(
                     confidence,
@@ -72,7 +81,8 @@ class MessageServices():
                             i.violation == "3" or 
                             i.violation == "8")]
 
-        person_predictions = [i for i in predictions if i.violation == "person"]
+        person_predictions = [i for i in predictions if i.violation == "5"]
+
 
         persons_detected = self.map_to_person_detected(object_predictions, person_predictions)
 

@@ -2,7 +2,7 @@ import os
 import cv2
 
 class Reo_Link_Image_Processing():
-    def extract_key_frames(video_path, base_save_dir="frames"):
+    def extract_key_frames(self, video_path, base_save_dir="frames"):
         """
         Extracts 5 evenly spaced frames from the given video and stores them
         in a dedicated subfolder named after the video (e.g., footage_3_frames).

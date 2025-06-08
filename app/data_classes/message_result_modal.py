@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+import base64
 @dataclass
 class Predictions():
     confidence: int
@@ -9,7 +9,7 @@ class Predictions():
     width: int
     height: int
     x: float
-    y: float  
+    y: float 
 
 @dataclass 
 class Person():
@@ -18,5 +18,5 @@ class Person():
 @dataclass
 class MessageResult():
     person_detected: list[Person]
-    output_image : str
+    #output_image : str
  
