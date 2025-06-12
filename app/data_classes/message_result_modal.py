@@ -13,6 +13,7 @@ class Predictions():
 
 @dataclass 
 class Person():
+    person: Predictions
     violations: list
 
 @dataclass

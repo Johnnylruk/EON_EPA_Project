@@ -81,7 +81,7 @@ class MessageServices():
                             i.violation == "3" or 
                             i.violation == "8")]
 
-        person_predictions = [i for i in predictions if i.violation == "5"]
+        person_predictions = [i for i in predictions if i.violation == "person"]
 
 
         persons_detected = self.map_to_person_detected(object_predictions, person_predictions)
@@ -109,12 +109,13 @@ class MessageServices():
                             if is_x_within_bounds and is_y_within_bounds and is_object_area_valid:
                                 objects_detected.append(violation)
                                
-                if len(objects_detected) > 0:
-                    people = Person(
-                        violations=objects_detected
-                    )
-                    people_detected.append(people)
-                       
+                
+                people = Person(
+                    person= person,
+                    violations=objects_detected
+                )
+                people_detected.append(people)
+                
 
             return people_detected
         except Exception as e:

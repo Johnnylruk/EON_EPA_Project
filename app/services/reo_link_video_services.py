@@ -27,7 +27,7 @@ class Reo_Link_Services():
 
         # Set Chrome options
         chrome_options = Options()
-        chrome_options.add_argument("--headless=new")
+        #chrome_options.add_argument("--headless=new")
         prefs = {
             "download.default_directory": download_dir,
             "download.prompt_for_download": False,
@@ -41,7 +41,7 @@ class Reo_Link_Services():
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         
         try:
-            while True:
+            
                 print("------------- Opening login page")
                 # Open Reolink Cloud
                 driver.get("https://cloud.reolink.com/user/cloud-library/")
@@ -62,14 +62,11 @@ class Reo_Link_Services():
                 print("------------- Searching for the first available video")
                 # Navigate to first video
                 video_list = driver.find_element(By.CLASS_NAME, "video-list")
-                if not video_list:
-                    continue
+          
                 first_video_wrap = video_list.find_element(By.CLASS_NAME, "wrap")
-                if not first_video_wrap:
-                    continue
+              
                 video_link_tag = first_video_wrap.find_element(By.CSS_SELECTOR, "a.cover")
-                if not video_link_tag:
-                    continue
+               
                 video_href = video_link_tag.get_attribute("href")
                 driver.get(video_href)
 
@@ -80,8 +77,7 @@ class Reo_Link_Services():
                 # Extract direct video URL
                 download_element = driver.find_element(By.XPATH, "//video[@src]")
                 video_url = download_element.get_attribute("src")
-                if not video_url:
-                    continue
+            
                 print(f"Direct video URL: {video_url}")
                 driver.get(video_url)
 
