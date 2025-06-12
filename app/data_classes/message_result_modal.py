@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-import base64
+
 @dataclass
 class Predictions():
     confidence: int

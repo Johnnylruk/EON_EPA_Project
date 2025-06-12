@@ -1,8 +1,9 @@
 from app.data_classes.message_result_modal import MessageResult, Predictions, Person
 from app.services.roboflow_connection_services import RoboflowServices
+from app.services.application_logs_services import ApplicationLogServices
 
 roboflow_services = RoboflowServices()
-
+application_log_services = ApplicationLogServices()
 
 class MessageServices():
     def create_message(self, result) -> MessageResult:
@@ -109,12 +110,14 @@ class MessageServices():
                             if is_x_within_bounds and is_y_within_bounds and is_object_area_valid:
                                 objects_detected.append(violation)
                                
-                
+
                 people = Person(
                     person= person,
                     violations=objects_detected
                 )
                 people_detected.append(people)
+                
+                self.application_log_violation(people_detected, objects_detected)
                 
 
             return people_detected
@@ -154,3 +157,11 @@ class MessageServices():
 
         object_box_area = object_height * object_width
         return object_box_area
+    
+    def application_log_violation(self, people_detected, objects_detected):
+        try:
+            application_log_services.log_exceptions(objects_detected, people_detected)
+        except Exception as e:
+            print(f"Application log violation exception: {e}")
+            return e
+            

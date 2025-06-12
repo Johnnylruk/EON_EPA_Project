@@ -68,7 +68,7 @@ def get_violation_data() -> MessageResult:
         
         # -------- CREATE MESSAGE TO SEND TO FRONT END ----------- #
         response_message = message_services.create_message(result)
-
+        
         return response_message
 
 ##____________________ UPDATE AI MODEL _________________________##
