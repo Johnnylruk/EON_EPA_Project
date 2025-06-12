@@ -39,7 +39,7 @@ class Reo_Link_Services():
         print("------------- Launching browser")
         # Launch browser
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-
+        
         try:
             while True:
                 print("------------- Opening login page")

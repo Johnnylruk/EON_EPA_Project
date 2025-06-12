@@ -122,20 +122,27 @@ class MessageServices():
 
 
     def person_class_bounding_box_calc(self, person):
+        ## STEP 1
+        ####### take person box hieght, width, x and y from Person class
         person_box_width = person.width
         person_box_height = person.height
         person_x = person.x
         person_y = person.y
+        
+        ## STEP 2
+        ####### create 10% margin around the poerson box 
+        margin_width = person_box_width * 0.1
+        margin_height = person_box_height * 0.1
+        
+        person_width = (person_box_width + margin_width) / 2
+        person_height = (person_box_height + margin_height) / 2
 
-        person_width = person_box_width / 2
         person_x_min = person_x - person_width
         person_x_max = person_x + person_width
-
-        person_height = person_box_height / 2
         person_y_min = person_y - person_height
         person_y_max = person_y + person_height
 
-        person_box_area = person_box_height * person_box_width
+        person_box_area = (person_box_width + margin_width) * (person_box_height + margin_height)
 
         return (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area)
 

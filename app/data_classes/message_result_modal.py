@@ -18,5 +18,4 @@ class Person():
 @dataclass
 class MessageResult():
     person_detected: list[Person]
-    #output_image : str
  

@@ -7,6 +7,7 @@ from app.services.camera_services import CameraServices
 from app.services.message_services import MessageServices
 from app.services.image_adjustment_service import ImageAdjustmentService
 from app.services.application_logs_services import ApplicationLogServices
+from app.data_classes.message_result_modal import MessageResult
 
 app = FastAPI()
 
@@ -26,8 +27,8 @@ application_service = ApplicationLogServices()
 
 ##____________________ GET VIOLATION DATA _________________________##
    
-@app.post("/get-violation-data")
-def get_violation_data() -> str: 
+@app.get("/get-violation-data")
+def get_violation_data() -> MessageResult: 
         """ 
             @accepts - string base64
             @returns - string json
@@ -70,7 +71,6 @@ def get_violation_data() -> str:
 
         return response_message
 
-get_violation_data()
 ##____________________ UPDATE AI MODEL _________________________##
 
 # def check_model_update():
