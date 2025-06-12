@@ -8,6 +8,7 @@ from app.services.message_services import MessageServices
 from app.services.image_adjustment_service import ImageAdjustmentService
 from app.services.application_logs_services import ApplicationLogServices
 from app.data_classes.message_result_modal import MessageResult
+from app.data_classes.violation_logs_model  import ViolationLogs
 
 app = FastAPI()
 
@@ -68,8 +69,23 @@ def get_violation_data() -> MessageResult:
         
         # -------- CREATE MESSAGE TO SEND TO FRONT END ----------- #
         response_message = message_services.create_message(result)
-        
+
         return response_message
+
+
+
+##____________________ GET VIOLATION LOGs _________________________##
+   
+@app.get("/get-violation-log")
+def get_violation_data() -> ViolationLogs: 
+        """ 
+            @accepts - string base64
+            @returns - string json
+
+            Gets image from reo link cloud and sends it to roboflow cloud storage
+            to be processed by AI model
+         """
+         
 
 ##____________________ UPDATE AI MODEL _________________________##
 
