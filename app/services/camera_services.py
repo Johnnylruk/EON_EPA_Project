@@ -53,8 +53,7 @@ class CameraServices():
             return frames
         except Exception as e:
             return e
-
-
+        
     ##----------- END CAMERA CONNECTION FUNCTIONS -----------##
 
 

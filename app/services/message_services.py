@@ -152,15 +152,18 @@ class MessageServices():
 
 
     def object_class_area_calc(self, object):
-        object_width = object.width
-        object_height = object.height
+        try:
+            object_width = object.width
+            object_height = object.height
 
-        object_box_area = object_height * object_width
-        return object_box_area
+            object_box_area = object_height * object_width
+            return object_box_area
+        except Exception as e:
+            return e
     
     def application_log_violation(self, people_detected, objects_detected):
         try:
-            application_log_services.log_exceptions(objects_detected, people_detected)
+            application_log_services.log_violation(objects_detected, people_detected)
         except Exception as e:
             print(f"Application log violation exception: {e}")
             return e

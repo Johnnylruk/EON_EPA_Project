@@ -23,7 +23,7 @@ roboflow_client = InferenceHTTPClient(
     )
 message_services = MessageServices()
 image_adjustment = ImageAdjustmentService()
-application_service = ApplicationLogServices()
+application_log_service = ApplicationLogServices()
 
 
 ##____________________ GET VIOLATION DATA _________________________##
@@ -31,8 +31,8 @@ application_service = ApplicationLogServices()
 @app.get("/get-violation-data")
 def get_violation_data() -> MessageResult: 
         """ 
-            @accepts - string base64
-            @returns - string json
+            @accepts - No type
+            @returns - MessageResult
 
             Gets image from reo link cloud and sends it to roboflow cloud storage
             to be processed by AI model
@@ -77,15 +77,17 @@ def get_violation_data() -> MessageResult:
 ##____________________ GET VIOLATION LOGs _________________________##
    
 @app.get("/get-violation-log")
-def get_violation_data() -> ViolationLogs: 
+def get_violation_log() -> list[ViolationLogs]: 
         """ 
-            @accepts - string base64
-            @returns - string json
+            @accepts - No type
+            @returns - ViolationLogs
 
-            Gets image from reo link cloud and sends it to roboflow cloud storage
-            to be processed by AI model
+            Gets image violation log model storage log information from
+            application log services
          """
-         
+        violation_logs = application_log_service.get_violation_logs()
+
+        return violation_logs
 
 ##____________________ UPDATE AI MODEL _________________________##
 

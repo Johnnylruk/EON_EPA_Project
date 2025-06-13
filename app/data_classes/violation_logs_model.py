@@ -11,4 +11,4 @@ class ViolationLogs():
 # Routing Model
 @dataclass
 class ViolationMessage():
-    message: ViolationLogs
+    violations: list[ViolationLogs]
