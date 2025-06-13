@@ -27,7 +27,7 @@ class Reo_Link_Services():
 
         # Set Chrome options
         chrome_options = Options()
-        #chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--headless=new")
         prefs = {
             "download.default_directory": download_dir,
             "download.prompt_for_download": False,

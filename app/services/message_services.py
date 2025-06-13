@@ -21,7 +21,9 @@ class MessageServices():
             predictions = self.create_prediction_model(predictions_list)
             persons_detected = self.get_violation_from_predictions(predictions)
 
-            result_model = MessageResult(persons_detected)
+            result_model = MessageResult(
+                    person_detected=persons_detected
+                )
                         
             # ## encryption here
             
@@ -36,32 +38,35 @@ class MessageServices():
             predictions = list()
 
             for item in predictions_list:
-                
                 if not item:
                     print("No items in list")
                     continue
+                for i in item:
+                    if not i:
+                        print("No items in list")
+                        continue    
 
-                confidence = item[0]["confidence"]
-                violation = item[0]["class"]
-                violation_id = item[0]["class_id"]
-                detection_id = item[0]["detection_id"]
-                width = item[0]["width"]
-                height = item[0]["height"]
-                x = item[0]["x"]
-                y = item[0]["y"]
-                
-                prediction_model = Predictions(
-                    confidence,
-                    violation,
-                    violation_id,
-                    detection_id,
-                    width,
-                    height,
-                    x,
-                    y
-                )
-                
-                predictions.append(prediction_model)
+                    confidence = i["confidence"]
+                    violation = i["class"]
+                    violation_id = i["class_id"]
+                    detection_id = i["detection_id"]
+                    width = i["width"]
+                    height = i["height"]
+                    x = i["x"]
+                    y = i["y"]
+                    
+                    prediction_model = Predictions(
+                        confidence,
+                        violation,
+                        violation_id,
+                        detection_id,
+                        width,
+                        height,
+                        x,
+                        y
+                    )
+                    
+                    predictions.append(prediction_model)
             return predictions
         except Exception as e:
             return e
@@ -78,11 +83,12 @@ class MessageServices():
         
         object_predictions = [i for i in predictions if (
                             i.violation == "12" or  
-                            i.violation == "15" or 
-                            i.violation == "3" or 
-                            i.violation == "8")]
+                            i.violation == "15" 
+                          #  i.violation == "3" or 
+                          #  i.violation == "8"
+                          )]
 
-        person_predictions = [i for i in predictions if i.violation == "person"]
+        person_predictions = [i for i in predictions if i.violation == "5"]
 
 
         persons_detected = self.map_to_person_detected(object_predictions, person_predictions)

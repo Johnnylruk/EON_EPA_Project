@@ -64,7 +64,7 @@ def get_violation_data() -> MessageResult:
                 workflow_rules_dict,
                 roboflow_connection['connection_response'],
                 roboflow_connection['workspace_name'],
-                blurred_imgs
+                blurred_imgs[0]
             )
         
         # -------- CREATE MESSAGE TO SEND TO FRONT END ----------- #

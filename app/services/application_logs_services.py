@@ -54,7 +54,7 @@ class ApplicationLogServices():
         else:
             os.makedirs(folder_path, exist_ok=True)
 
-    def get_violation_logs():
+    def get_violation_logs(self):
         current_dir = os.getcwd()     
         folder_path = os.path.join(current_dir,"violation_logs")
 

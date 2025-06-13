@@ -69,14 +69,14 @@ class RoboflowServices():
             project = roboflow_project_list.project(project_id)
             classes = project.classes
 
-            
-            absolute_path = f"C://Users/vinny/eon_ppe_backend/app/model_weights"
+        
+            absolute_path = f"C:/Users/vinny/Documents/EON_EPA_Project/app/services/model_weights/"
             roboflow_project_list.deploy_model(
-                model_type="yolov8n",
+                model_type="yolov8l",
                 model_path=f"{absolute_path}",
                 project_ids=[project_id],
-                model_name=f"Project_Falcon_Model",
-                filename="yolov8n.pt"
+                model_name=f"epa-ppe-identification",  
+                filename="last.pt"
             )
         except Exception as e:
             return e
