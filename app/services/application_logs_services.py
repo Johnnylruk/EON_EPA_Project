@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import os
 class ApplicationLogServices():
 
-    def log_violation(self, objects_detected, people_detected):
+    async def log_violation(self, objects_detected, people_detected):
         """
             @params: list, list
 
@@ -38,13 +38,13 @@ class ApplicationLogServices():
             )
             violation_log_list.append(violation_logs)
         
-        self.create_violation_log(violation_log_list)
+        await self.create_violation_log(violation_log_list)
         
     
-    def log_exception():
+    async def log_exception():
         return ""
     
-    def create_violation_log(self, violation_log_list):
+    async def create_violation_log(self, violation_log_list):
         current_dir = os.getcwd()     
         folder_path = os.path.join(current_dir,"violation_logs")
         if os.path.exists(folder_path):
@@ -54,7 +54,7 @@ class ApplicationLogServices():
         else:
             os.makedirs(folder_path, exist_ok=True)
 
-    def get_violation_logs(self):
+    async def get_violation_logs(self):
         current_dir = os.getcwd()     
         folder_path = os.path.join(current_dir,"violation_logs")
 

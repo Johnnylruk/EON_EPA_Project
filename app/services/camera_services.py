@@ -34,21 +34,21 @@ class CameraServices():
 
     ##----------- BEGIN CAMERA CONNECTION FUNCTIONS ---------##
 
-    def get_reo_link_camera_footage(self):
+    async def get_reo_link_camera_footage(self):
         try:
             # Get video footage from reolink
-            video_file = reo_link_services.retrieve_footage()
+            video_file = await reo_link_services.retrieve_footage()
             print("Downloaded file:", video_file)
             return video_file
         except Exception as e:
             return e
-        
-    def get_reo_link_images_frames(self):
+         
+    async def get_reo_link_images_frames(self):
         try:
             video_file = self.get_reo_link_camera_footage()
             # Extract the iamge frames from the footage
             video_path = f"footage/{video_file}"
-            frames = reo_link_image_processing.extract_key_frames(video_path)
+            frames = await reo_link_image_processing.extract_key_frames(video_path)
             print("Extracted frames:", frames)
             return frames
         except Exception as e:

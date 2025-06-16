@@ -4,7 +4,7 @@ from app.services.roboflow_connection_services import RoboflowServices
 roboflow_services = RoboflowServices()
 
 class WorkflowService():
-    def run_roboflow_workflow(self, roboflow_client, workflow_rules_dict: dict, workflow_response: dict,workspace_name: str, images: str) -> list:
+    async def run_roboflow_workflow(self, roboflow_client, workflow_rules_dict: dict, workflow_response: dict,workspace_name: str, images: str) -> list:
         try:
             get_workflows = roboflow_services.get_roboflow_workflow_name_list(workflow_response)
             for detection_workflow in get_workflows:

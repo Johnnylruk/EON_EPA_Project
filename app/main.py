@@ -29,7 +29,7 @@ application_log_service = ApplicationLogServices()
 ##____________________ GET VIOLATION DATA _________________________##
    
 @app.get("/get-violation-data")
-def get_violation_data() -> MessageResult: 
+async def get_violation_data() -> MessageResult: 
         """ 
             @accepts - No type
             @returns - MessageResult
@@ -41,14 +41,14 @@ def get_violation_data() -> MessageResult:
         # -------- GET IMAGE FROM CAMERA -------------------------- #
         # TEMPORARY DELETE WHEN REO LINK CONNECTED  
         # image_from_local = camera_services.get_local_image()
-        image_from_reo = camera_services.get_reo_link_images_frames()
+        image_from_reo = await camera_services.get_reo_link_images_frames()
 
         #image = camera_services.take_image()
        
         # -------- BEGIN IMAGE BLURRING --------------------------- #
         blurred_imgs = []
         for img in image_from_reo:
-            blurred_img = image_adjustment.blur_face_images(img)
+            blurred_img = await image_adjustment.blur_face_images(img)
             blurred_imgs.append(blurred_img)
         
         
@@ -59,7 +59,7 @@ def get_violation_data() -> MessageResult:
         # -------- SEND TO ROBOFLOW ------------------------------- #
         # send image to roboflow using image variable temporarily
         # will uses image_reo_link variable when camera connected
-        result = workflow.run_roboflow_workflow(
+        result = await workflow.run_roboflow_workflow(
                 roboflow_client, 
                 workflow_rules_dict,
                 roboflow_connection['connection_response'],
@@ -68,16 +68,15 @@ def get_violation_data() -> MessageResult:
             )
         
         # -------- CREATE MESSAGE TO SEND TO FRONT END ----------- #
-        response_message = message_services.create_message(result)
+        response_message = await message_services.create_message(result)
 
         return response_message
-
 
 
 ##____________________ GET VIOLATION LOGs _________________________##
    
 @app.get("/get-violation-log")
-def get_violation_log() -> list[ViolationLogs]: 
+async def get_violation_log() -> list[ViolationLogs]: 
         """ 
             @accepts - No type
             @returns - ViolationLogs
@@ -85,10 +84,10 @@ def get_violation_log() -> list[ViolationLogs]:
             Gets image violation log model storage log information from
             application log services
          """
-        violation_logs = application_log_service.get_violation_logs()
+        violation_logs = await application_log_service.get_violation_logs()
 
         return violation_logs
-
+get_violation_log()
 ##____________________ UPDATE AI MODEL _________________________##
 
 # def check_model_update():

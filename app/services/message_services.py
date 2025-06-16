@@ -6,7 +6,7 @@ roboflow_services = RoboflowServices()
 application_log_services = ApplicationLogServices()
 
 class MessageServices():
-    def create_message(self, result) -> MessageResult:
+    async def create_message(self, result) -> MessageResult:
         try:
             predictions_list = []
             for item in result:
@@ -18,12 +18,10 @@ class MessageServices():
             if not predictions_list:
                 return "No items in list"
 
-            predictions = self.create_prediction_model(predictions_list)
-            persons_detected = self.get_violation_from_predictions(predictions)
+            predictions = await self.create_prediction_model(predictions_list)
+            persons_detected = await self.get_violation_from_predictions(predictions)
 
-            result_model = MessageResult(
-                    person_detected=persons_detected
-                )
+            result_model = MessageResult(persons_detected)
                         
             # ## encryption here
             
@@ -33,7 +31,7 @@ class MessageServices():
             return e
     
     # try and use a mapping services
-    def create_prediction_model(self, predictions_list: list) -> list:
+    async def create_prediction_model(self, predictions_list: list) -> list:
         try:
             predictions = list()
 
@@ -41,7 +39,7 @@ class MessageServices():
                 if not item:
                     print("No items in list")
                     continue
-                for i in item:
+                for i in range(0, len(item)):
                     if not i:
                         print("No items in list")
                         continue    
@@ -71,15 +69,15 @@ class MessageServices():
         except Exception as e:
             return e
 
-    def get_violation_from_predictions(self, predictions: list) -> list[Person]:
+    async def get_violation_from_predictions(self, predictions: list) -> list[Person]:
         try:
-            object_violations = self.map_classes_to_model(predictions)   
+            object_violations = await self.map_classes_to_model(predictions)   
             return object_violations
               
         except Exception as e:
             return e
     
-    def map_classes_to_model(self, predictions) -> list[Person]:
+    async def map_classes_to_model(self, predictions) -> list[Person]:
         
         object_predictions = [i for i in predictions if (
                             i.violation == "12" or  
@@ -91,12 +89,11 @@ class MessageServices():
         person_predictions = [i for i in predictions if i.violation == "5"]
 
 
-        persons_detected = self.map_to_person_detected(object_predictions, person_predictions)
-
+        persons_detected = await self.map_to_person_detected(object_predictions, person_predictions)
 
         return persons_detected
 
-    def map_to_person_detected(self, object_violations: list, person_predictions: list) -> list[Person]:
+    async def map_to_person_detected(self, object_violations: list, person_predictions: list) -> list[Person]:
         try:
             people_detected = []
             for person in person_predictions: 
@@ -104,10 +101,10 @@ class MessageServices():
                 for violation in object_violations:
                             
                             ## PERSON CLASS BOUNDING BOX CALC
-                            (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area) = self.person_class_bounding_box_calc(person)
+                            (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area) = await self.person_class_bounding_box_calc(person)
                             
                             ## OBJECT CLASS AREA CALC
-                            object_box_area = self.object_class_area_calc(violation)
+                            object_box_area = await self.object_class_area_calc(violation)
 
                             is_x_within_bounds = violation.x >= person_x_min and violation.x <= person_x_max
                             is_y_within_bounds = violation.y >= person_y_min and violation.y <= person_y_max
@@ -123,7 +120,7 @@ class MessageServices():
                 )
                 people_detected.append(people)
                 
-                self.application_log_violation(people_detected, objects_detected)
+                await self.application_log_violation(people_detected, objects_detected)
                 
 
             return people_detected
@@ -131,7 +128,7 @@ class MessageServices():
             return e
 
 
-    def person_class_bounding_box_calc(self, person):
+    async def person_class_bounding_box_calc(self, person):
         ## STEP 1
         ####### take person box hieght, width, x and y from Person class
         person_box_width = person.width
@@ -157,7 +154,7 @@ class MessageServices():
         return (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area)
 
 
-    def object_class_area_calc(self, object):
+    async def object_class_area_calc(self, object):
         try:
             object_width = object.width
             object_height = object.height
@@ -167,10 +164,9 @@ class MessageServices():
         except Exception as e:
             return e
     
-    def application_log_violation(self, people_detected, objects_detected):
+    async def application_log_violation(self, people_detected, objects_detected):
         try:
             application_log_services.log_violation(objects_detected, people_detected)
         except Exception as e:
             print(f"Application log violation exception: {e}")
             return e
-            
