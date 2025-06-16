@@ -2,21 +2,21 @@ from dataclasses import dataclass
 
 @dataclass
 class Predictions():
-    confidence: int
+    confidence: float
     violation: str
     violation_id: int
     detection_id: int
     width: int
     height: int
     x: float
-    y: float  
+    y: float 
 
 @dataclass 
 class Person():
+    person: Predictions
     violations: list
 
 @dataclass
 class MessageResult():
     person_detected: list[Person]
-    output_image : str
  

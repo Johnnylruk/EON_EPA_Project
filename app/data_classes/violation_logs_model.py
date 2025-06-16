@@ -1,0 +1,15 @@
+from dataclasses import dataclass
+
+# Services Model
+@dataclass
+class ViolationLogs():
+    violation: str
+    confidence: float
+    date: str
+    time: str
+    description: str
+
+# Routing Model
+@dataclass
+class ViolationMessage():
+    violations: list[ViolationLogs]
