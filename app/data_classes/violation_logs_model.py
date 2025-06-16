@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class ViolationLogs():
     violation: str
+    confidence: float
     date: str
     time: str
     description: str

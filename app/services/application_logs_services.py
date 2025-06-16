@@ -1,6 +1,7 @@
 from app.data_classes.violation_logs_model import ViolationLogs, ViolationMessage
 from datetime import datetime, timezone
 import os
+import math
 class ApplicationLogServices():
 
     async def log_violation(self, objects_detected, people_detected):
@@ -15,10 +16,10 @@ class ApplicationLogServices():
             Logs 
             
         """
-        if people_detected > 0 and objects_detected > 0:      
+        if len(people_detected) > 0 and len(objects_detected) > 0:      
             severity = "poor"
             
-        elif people_detected > 0 and objects_detected == 0:
+        elif len(people_detected) > 0 and len(objects_detected) == 0:
             severity = "very poor"
 
         match(severity):
@@ -31,7 +32,8 @@ class ApplicationLogServices():
         violation_log_list = []
         for obj in objects_detected:
             violation_logs = ViolationLogs(
-                violation=obj,
+                violation=obj.violation,
+                confidence=str(round(obj.confidence, 2)),
                 date=str(datetime.now(tz=timezone.utc).date()),
                 time=str(datetime.now(tz=timezone.utc).ctime()),
                 description=description
@@ -50,7 +52,7 @@ class ApplicationLogServices():
         if os.path.exists(folder_path):
             for violation in violation_log_list:
                 with open(f"{folder_path}/violations.txt", "a") as f:
-                    f.write(f"{violation.violation}, {violation.date}, {violation.time}, {violation.description}\n")
+                    f.write(f"{violation.violation}, {violation.confidence}, {violation.date}, {violation.time}, {violation.description}\n")
         else:
             os.makedirs(folder_path, exist_ok=True)
 
@@ -62,14 +64,14 @@ class ApplicationLogServices():
            with open(f"{folder_path}/violations.txt", "r") as f:
             violations_result = []
             for line in f:
-               violation_text = f.readline()
-               violation_items = violation_text.split(",")
+               violation_items = line.split(",")
         
                violation_log = ViolationLogs(
                     violation=violation_items[0],
-                    date=violation_items[1],
-                    time=violation_items[2],
-                    description=violation_items[3]
+                    confidence=violation_items[1],
+                    date=violation_items[2],
+                    time=violation_items[3],
+                    description=violation_items[4]
                 )
                violations_result.append(violation_log)
             
@@ -79,3 +81,6 @@ class ApplicationLogServices():
             return violation_message
         else:
             os.makedirs(folder_path, exist_ok=True)
+
+
+        

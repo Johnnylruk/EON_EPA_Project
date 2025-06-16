@@ -45,7 +45,7 @@ class CameraServices():
          
     async def get_reo_link_images_frames(self):
         try:
-            video_file = self.get_reo_link_camera_footage()
+            video_file = await self.get_reo_link_camera_footage()
             # Extract the iamge frames from the footage
             video_path = f"footage/{video_file}"
             frames = await reo_link_image_processing.extract_key_frames(video_path)

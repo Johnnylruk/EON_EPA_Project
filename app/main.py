@@ -8,7 +8,7 @@ from app.services.message_services import MessageServices
 from app.services.image_adjustment_service import ImageAdjustmentService
 from app.services.application_logs_services import ApplicationLogServices
 from app.data_classes.message_result_modal import MessageResult
-from app.data_classes.violation_logs_model  import ViolationLogs
+from app.data_classes.violation_logs_model  import ViolationMessage
 
 app = FastAPI()
 
@@ -39,8 +39,6 @@ async def get_violation_data() -> MessageResult:
          """
          
         # -------- GET IMAGE FROM CAMERA -------------------------- #
-        # TEMPORARY DELETE WHEN REO LINK CONNECTED  
-        # image_from_local = camera_services.get_local_image()
         image_from_reo = await camera_services.get_reo_link_images_frames()
 
         #image = camera_services.take_image()
@@ -51,10 +49,6 @@ async def get_violation_data() -> MessageResult:
             blurred_img = await image_adjustment.blur_face_images(img)
             blurred_imgs.append(blurred_img)
         
-        
-        # -------- DEPLOY MOST RECENT MODEL TO ROBOFLOW ----------- #
-        #check_model_update()
-        #application_service.log_exceptions()
        
         # -------- SEND TO ROBOFLOW ------------------------------- #
         # send image to roboflow using image variable temporarily
@@ -76,7 +70,7 @@ async def get_violation_data() -> MessageResult:
 ##____________________ GET VIOLATION LOGs _________________________##
    
 @app.get("/get-violation-log")
-async def get_violation_log() -> list[ViolationLogs]: 
+async def get_violation_log() -> ViolationMessage: 
         """ 
             @accepts - No type
             @returns - ViolationLogs
@@ -84,21 +78,8 @@ async def get_violation_log() -> list[ViolationLogs]:
             Gets image violation log model storage log information from
             application log services
          """
-        violation_logs = await application_log_service.get_violation_logs()
+        # -------- GET LOGS FROM TXT FILE FOR VIOLATIONS----------- #
+        violation_logs_message = await application_log_service.get_violation_logs()
 
-        return violation_logs
-get_violation_log()
-##____________________ UPDATE AI MODEL _________________________##
+        return violation_logs_message
 
-# def check_model_update():
-#     """
-#         @params: None
-#         @returns: None
-#         @exception: Exception
-
-#         Checks if local model file has been updated and then sends a new 
-#         model to be used in roboflow workflow
-#     """
-#     roboflow_services.deploy_roboflow_model()
-
-# check_model_update()

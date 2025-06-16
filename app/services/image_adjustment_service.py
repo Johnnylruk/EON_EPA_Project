@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import os
 class ImageAdjustmentService:
-    def blur_face_images(self, image_base_path):
+    async def blur_face_images(self, image_base_path):
 
         project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         model_dir = os.path.join(project_root, "model_location")

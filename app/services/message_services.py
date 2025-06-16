@@ -39,7 +39,7 @@ class MessageServices():
                 if not item:
                     print("No items in list")
                     continue
-                for i in range(0, len(item)):
+                for i in item:
                     if not i:
                         print("No items in list")
                         continue    
@@ -166,7 +166,7 @@ class MessageServices():
     
     async def application_log_violation(self, people_detected, objects_detected):
         try:
-            application_log_services.log_violation(objects_detected, people_detected)
+            await application_log_services.log_violation(objects_detected, people_detected)
         except Exception as e:
             print(f"Application log violation exception: {e}")
             return e
