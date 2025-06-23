@@ -1,4 +1,4 @@
-from app.data_classes.message_result_modal import MessageResult, Predictions, Person
+from app.data_classes.message_result_modal import MessageResult, Predictions, Person, Image
 from app.services.roboflow_connection_services import RoboflowServices
 from app.services.application_logs_services import ApplicationLogServices
 
@@ -6,20 +6,21 @@ roboflow_services = RoboflowServices()
 application_log_services = ApplicationLogServices()
 
 class MessageServices():
-    async def create_message(self, result) -> MessageResult:
+    async def create_message(self, result: list) -> MessageResult:
         try:
             predictions_list = []
             for item in result:
                 for i in item:
                     if i == "predictions":
+                         
                         prediction = item[i]["predictions"]
                         predictions_list.append(prediction)                      
 
             if not predictions_list:
                 return "No items in list"
 
-            predictions = await self.create_prediction_model(predictions_list)
-            persons_detected = await self.get_violation_from_predictions(predictions)
+            predictions_by_image = await self.create_prediction_model(predictions_list)
+            persons_detected = await self.get_violation_from_predictions(predictions_by_image)
 
             result_model = MessageResult(persons_detected)
                         
@@ -33,9 +34,10 @@ class MessageServices():
     # try and use a mapping services
     async def create_prediction_model(self, predictions_list: list) -> list:
         try:
-            predictions = list()
-
+            
+            predictions = []   
             for item in predictions_list:
+                temp_predictions = []
                 if not item:
                     print("No items in list")
                     continue
@@ -43,11 +45,9 @@ class MessageServices():
                     if not i:
                         print("No items in list")
                         continue    
-
+                    
                     confidence = i["confidence"]
                     violation = i["class"]
-                    violation_id = i["class_id"]
-                    detection_id = i["detection_id"]
                     width = i["width"]
                     height = i["height"]
                     x = i["x"]
@@ -56,16 +56,21 @@ class MessageServices():
                     prediction_model = Predictions(
                         confidence,
                         violation,
-                        violation_id,
-                        detection_id,
                         width,
                         height,
                         x,
                         y
                     )
-                    
-                    predictions.append(prediction_model)
-            return predictions
+                    if prediction_model.confidence > 0.75:
+                        temp_predictions.append(prediction_model)
+                predictions.append(temp_predictions)
+
+            if predictions:
+                best_predictions = max(predictions, key=len)
+            else:
+                best_predictions = []
+
+            return best_predictions
         except Exception as e:
             return e
 
@@ -79,14 +84,17 @@ class MessageServices():
     
     async def map_classes_to_model(self, predictions) -> list[Person]:
         
-        object_predictions = [i for i in predictions if (
-                            i.violation == "12" or  
-                            i.violation == "15" 
-                          #  i.violation == "3" or 
-                          #  i.violation == "8"
-                          )]
 
-        person_predictions = [i for i in predictions if i.violation == "5"]
+        object_predictions = [i for i in predictions 
+                                if (
+                                    i.violation == "12" or  
+                                    i.violation == "15"
+                                )]
+
+        person_predictions =  [i for i in predictions 
+                               if (
+                                    i.violation == "5"
+                                )]
 
 
         persons_detected = await self.map_to_person_detected(object_predictions, person_predictions)

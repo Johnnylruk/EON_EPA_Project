@@ -36,8 +36,8 @@ class ImageAdjustmentService:
         height, width = image.shape[:2]
         
         # Increase the blury effect
-        kernel_width = (width // 3) | 1
-        kernel_height = (height // 3) | 1
+        kernel_width = (width // 2) | 1
+        kernel_height = (height // 2) | 1
         # Process the image: resize and perform mean subtraction
         blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300), (104.0, 177.0, 123.0))
         

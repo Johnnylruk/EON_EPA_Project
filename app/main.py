@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from app.services.roboflow_connection_services import RoboflowServices
 from inference_sdk import InferenceHTTPClient
 from app.services.roboflow_workflow_pipeline import WorkflowService
@@ -58,14 +58,21 @@ async def get_violation_data() -> MessageResult:
                 workflow_rules_dict,
                 roboflow_connection['connection_response'],
                 roboflow_connection['workspace_name'],
-                blurred_imgs[0]
+                blurred_imgs
             )
+        
+        if isinstance(result, Exception):
+            raise HTTPException(status_code=500, detail=str(result))
         
         # -------- CREATE MESSAGE TO SEND TO FRONT END ----------- #
         response_message = await message_services.create_message(result)
 
+        if isinstance(response_message, Exception):
+            raise HTTPException(status_code=500, detail=str(response_message))
+        
         return response_message
 
+ 
 
 ##____________________ GET VIOLATION LOGs _________________________##
    

@@ -4,8 +4,6 @@ from dataclasses import dataclass
 class Predictions():
     confidence: float
     violation: str
-    violation_id: int
-    detection_id: int
     width: int
     height: int
     x: float
@@ -17,6 +15,10 @@ class Person():
     violations: list
 
 @dataclass
+class Image():
+    predictions: list[Predictions]
+
+@dataclass
 class MessageResult():
-    person_detected: list[Person]
+    person_detected: list[Image]
  

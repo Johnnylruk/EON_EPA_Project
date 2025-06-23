@@ -5,7 +5,7 @@ from PIL import Image
 import numpy as np
 from app.services.reo_link_video_services import Reo_Link_Services
 from app.services.reo_link_image_processing import Reo_Link_Image_Processing
-
+from app.data_classes.violation_logs_model import ViolationErrorMessage
 reo_link_services = Reo_Link_Services()
 reo_link_image_processing = Reo_Link_Image_Processing()
 
@@ -46,6 +46,7 @@ class CameraServices():
          
     async def get_reo_link_images_frames(self):
         try:
+        
             video_file = await self.get_reo_link_camera_footage()
             # Extract the iamge frames from the footage
             video_path = f"footage/{video_file}"

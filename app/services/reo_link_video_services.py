@@ -8,8 +8,9 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 
+
 class Reo_Link_Services():
-    async def retrieve_footage(self) -> str:
+    async def retrieve_footage(self) -> str :
         """
         This is deisgned to retrieve the latest footage from Reolink 
         and store it in the footage folder (found in the root dir)
@@ -27,7 +28,7 @@ class Reo_Link_Services():
 
         # Set Chrome options
         chrome_options = Options()
-        chrome_options.add_argument("--headless=new")
+        #chrome_options.add_argument("--headless=new")
         prefs = {
             "download.default_directory": download_dir,
             "download.prompt_for_download": False,
@@ -59,10 +60,12 @@ class Reo_Link_Services():
                 print("------------- Logging in")
                 time.sleep(5)
 
+            
                 print("------------- Searching for the first available video")
                 # Navigate to first video
+               
                 video_list = driver.find_element(By.CLASS_NAME, "video-list")
-          
+            
                 first_video_wrap = video_list.find_element(By.CLASS_NAME, "wrap")
               
                 video_link_tag = first_video_wrap.find_element(By.CSS_SELECTOR, "a.cover")
@@ -71,7 +74,7 @@ class Reo_Link_Services():
                 driver.get(video_href)
 
                 print(f"Navigated to video playback page: {video_href}")
-                time.sleep(3)
+                time.sleep(7)
 
                 print("------------- Extracting direct video URL")
                 # Extract direct video URL

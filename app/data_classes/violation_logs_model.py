@@ -13,3 +13,7 @@ class ViolationLogs():
 @dataclass
 class ViolationMessage():
     violations: list[ViolationLogs]
+
+@dataclass
+class ViolationErrorMessage():
+    erorr_msg: str

@@ -61,26 +61,6 @@ class RoboflowServices():
         except Exception as e:
             return e
 
-
-    # def deploy_roboflow_model(self):
-    #     try:
-    #         (roboflow_token, roboflow_connection, roboflow_project_list) = self.roboflow_details_helper()
-    #         project_id = roboflow_project_list.project_list[0]['name'].lower()
-    #         project = roboflow_project_list.project(project_id)
-    #         classes = project.classes
-
-        
-            absolute_path = f"C:/Users/vinny/Documents/EON_EPA_Project/app/services/model_weights/"
-            roboflow_project_list.deploy_model(
-                model_type="yolov8l",
-                model_path=f"{absolute_path}",
-                project_ids=[project_id],
-                model_name=f"epa-ppe-identification",  
-                filename="last.pt"
-            )
-        except Exception as e:
-            return e
-
     def get_roboflow_classes(self) -> list:
         try:
             (roboflow_token, roboflow_connection, roboflow_project_list) = self.roboflow_details_helper()
