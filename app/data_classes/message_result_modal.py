@@ -15,10 +15,6 @@ class Person():
     violations: list
 
 @dataclass
-class Image():
-    predictions: list[Predictions]
-
-@dataclass
 class MessageResult():
-    person_detected: list[Image]
+    person_detected: list[Person]
  

@@ -24,7 +24,7 @@ class ApplicationLogServices():
 
         match(severity):
             case "poor": 
-                description = "Person detected with incorrect PPE"
+                description = f"{len(people_detected)} people detected with incorrect PPE"
             
             case "very poor":
                 description = "Person detected without PPE"
@@ -41,10 +41,7 @@ class ApplicationLogServices():
             violation_log_list.append(violation_logs)
         
         await self.create_violation_log(violation_log_list)
-        
-    
-    async def log_exception():
-        return ""
+          
     
     async def create_violation_log(self, violation_log_list):
         current_dir = os.getcwd()     
@@ -56,7 +53,8 @@ class ApplicationLogServices():
         else:
             os.makedirs(folder_path, exist_ok=True)
 
-    async def get_violation_logs(self):
+    # replaced with render database call
+    async def get_violation_logs(self, startDate, endDate):
         current_dir = os.getcwd()     
         folder_path = os.path.join(current_dir,"violation_logs")
 
@@ -64,16 +62,16 @@ class ApplicationLogServices():
            with open(f"{folder_path}/violations.txt", "r") as f:
             violations_result = []
             for line in f:
-               violation_items = line.split(",")
-        
-               violation_log = ViolationLogs(
-                    violation=violation_items[0],
-                    confidence=violation_items[1],
-                    date=violation_items[2],
-                    time=violation_items[3],
-                    description=violation_items[4]
-                )
-               violations_result.append(violation_log)
+               violation_items = [item.strip() for item in line.split(",")]
+               if violation_items[2] >= startDate and violation_items[2] <= endDate:
+                violation_log = ViolationLogs(
+                        violation=violation_items[0],
+                        confidence=violation_items[1],
+                        date=violation_items[2],
+                        time=violation_items[3],
+                        description=violation_items[4]
+                    )
+                violations_result.append(violation_log)
             
             violation_message = ViolationMessage(
                 violations=violations_result

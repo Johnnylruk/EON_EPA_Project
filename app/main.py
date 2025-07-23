@@ -1,29 +1,25 @@
-from fastapi import FastAPI, HTTPException
-from app.services.roboflow_connection_services import RoboflowServices
+from fastapi import FastAPI, HTTPException, Query
+from typing import Optional
 from inference_sdk import InferenceHTTPClient
-from app.services.roboflow_workflow_pipeline import WorkflowService
-from app.services.roboflow_workflow_pipeline_rules import workflow_rules_dict
-from app.services.camera_services import CameraServices
 from app.services.message_services import MessageServices
 from app.services.image_adjustment_service import ImageAdjustmentService
 from app.services.application_logs_services import ApplicationLogServices
 from app.data_classes.message_result_modal import MessageResult
 from app.data_classes.violation_logs_model  import ViolationMessage
+from app.services.camera_services import CameraServices
 
 app = FastAPI()
-
-roboflow_services = RoboflowServices()
-workflow = WorkflowService()
-camera_services = CameraServices()
-roboflow_connection = roboflow_services.roboflow_connection_utility()
-roboflow_client = InferenceHTTPClient(
-      
-        api_url='https://detect.roboflow.com', 
-        api_key=roboflow_connection['api_token']
-    )
 message_services = MessageServices()
 image_adjustment = ImageAdjustmentService()
 application_log_service = ApplicationLogServices()
+camera_services = CameraServices()
+
+@app.get("/camera-api-connection")
+async def get_image_from_camera():
+        """
+            camera api connection sends image upon motion detection
+        """
+        camera_services.send_to_publisher()
 
 
 ##____________________ GET VIOLATION DATA _________________________##
@@ -33,51 +29,18 @@ async def get_violation_data() -> MessageResult:
         """ 
             @accepts - No type
             @returns - MessageResult
-
-            Gets image from reo link cloud and sends it to roboflow cloud storage
-            to be processed by AI model
+            Gets violation amounts from render database
          """
-         
-        # -------- GET IMAGE FROM CAMERA -------------------------- #
-        image_from_reo = await camera_services.get_reo_link_images_frames()
-
-        #image = camera_services.take_image()
-       
-        # -------- BEGIN IMAGE BLURRING --------------------------- #
-        blurred_imgs = []
-        for img in image_from_reo:
-            blurred_img = await image_adjustment.blur_face_images(img)
-            blurred_imgs.append(blurred_img)
+    
+        # needs to get logs from render
         
-       
-        # -------- SEND TO ROBOFLOW ------------------------------- #
-        # send image to roboflow using image variable temporarily
-        # will uses image_reo_link variable when camera connected
-        result = await workflow.run_roboflow_workflow(
-                roboflow_client, 
-                workflow_rules_dict,
-                roboflow_connection['connection_response'],
-                roboflow_connection['workspace_name'],
-                blurred_imgs
-            )
-        
-        if isinstance(result, Exception):
-            raise HTTPException(status_code=500, detail=str(result))
-        
-        # -------- CREATE MESSAGE TO SEND TO FRONT END ----------- #
-        response_message = await message_services.create_message(result)
-
-        if isinstance(response_message, Exception):
-            raise HTTPException(status_code=500, detail=str(response_message))
-        
-        return response_message
+        return ""
 
  
-
 ##____________________ GET VIOLATION LOGs _________________________##
    
 @app.get("/get-violation-log")
-async def get_violation_log() -> ViolationMessage: 
+async def get_violation_log(startDate: Optional[str] = Query(None), endDate: Optional[str] = Query(None)) -> ViolationMessage: 
         """ 
             @accepts - No type
             @returns - ViolationLogs
@@ -86,7 +49,7 @@ async def get_violation_log() -> ViolationMessage:
             application log services
          """
         # -------- GET LOGS FROM TXT FILE FOR VIOLATIONS----------- #
-        violation_logs_message = await application_log_service.get_violation_logs()
+        violation_logs_message = await application_log_service.get_violation_logs(startDate, endDate)
 
         return violation_logs_message
 

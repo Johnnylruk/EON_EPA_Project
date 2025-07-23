@@ -1,8 +1,6 @@
-from app.data_classes.message_result_modal import MessageResult, Predictions, Person, Image
-from app.services.roboflow_connection_services import RoboflowServices
+from app.data_classes.message_result_modal import MessageResult, Predictions, Person
 from app.services.application_logs_services import ApplicationLogServices
 
-roboflow_services = RoboflowServices()
 application_log_services = ApplicationLogServices()
 
 class MessageServices():

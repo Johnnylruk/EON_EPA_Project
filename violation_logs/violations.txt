@@ -110,3 +110,17 @@
 15, 0.86, 2025-06-20, Fri Jun 20 23:02:12 2025, Person detected with incorrect PPE
 15, 0.92, 2025-06-20, Fri Jun 20 23:02:12 2025, Person detected with incorrect PPE
 12, 0.45, 2025-06-20, Fri Jun 20 23:02:12 2025, Person detected with incorrect PPE
+15, 0.95, 2025-06-23, Mon Jun 23 12:33:01 2025, Person detected with incorrect PPE
+12, 0.93, 2025-06-23, Mon Jun 23 12:33:01 2025, Person detected with incorrect PPE
+15, 0.95, 2025-06-23, Mon Jun 23 12:38:11 2025, Person detected with incorrect PPE
+12, 0.93, 2025-06-23, Mon Jun 23 12:38:11 2025, Person detected with incorrect PPE
+15, 0.95, 2025-06-23, Mon Jun 23 15:43:13 2025, Person detected with incorrect PPE
+12, 0.93, 2025-06-23, Mon Jun 23 15:43:13 2025, Person detected with incorrect PPE
+15, 0.95, 2025-06-23, Mon Jun 23 15:45:09 2025, Person detected with incorrect PPE
+12, 0.93, 2025-06-23, Mon Jun 23 15:45:09 2025, Person detected with incorrect PPE
+15, 0.95, 2025-06-23, Mon Jun 23 16:05:24 2025, Person detected with incorrect PPE
+12, 0.93, 2025-06-23, Mon Jun 23 16:05:24 2025, Person detected with incorrect PPE
+15, 0.95, 2025-06-23, Mon Jun 23 16:06:33 2025, Person detected with incorrect PPE
+12, 0.93, 2025-06-23, Mon Jun 23 16:06:33 2025, Person detected with incorrect PPE
+15, 0.95, 2025-06-23, Mon Jun 23 16:08:34 2025, Person detected with incorrect PPE
+12, 0.93, 2025-06-23, Mon Jun 23 16:08:34 2025, Person detected with incorrect PPE
