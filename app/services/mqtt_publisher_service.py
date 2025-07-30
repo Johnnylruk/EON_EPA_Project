@@ -9,7 +9,7 @@ from uuid import uuid4
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
-
+import time
 # Load secret key
 load_dotenv()
 key = binascii.unhexlify(os.getenv("SECRET_KEY"))
@@ -62,5 +62,6 @@ class Publisher_Service():
        client.loop_start()
        client.publish("camera_1", file_url)
        print(f"Published encrypted image URL: {file_url}")
+       time.sleep(1)
        client.loop_stop()
        client.disconnect()

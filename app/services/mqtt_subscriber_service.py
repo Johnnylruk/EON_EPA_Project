@@ -1,50 +1,43 @@
 import paho.mqtt.client as mqtt
-import base64
 import requests
 import os
-import cv2
-import numpy as np
+import asyncio
+import aiomqtt
 import binascii
 from dotenv import load_dotenv
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
+from app.services.ppe_ai_services import PPE_AI_Services
+from app.services.message_services import MessageServices
+
 
 # Load secret key
 load_dotenv()
 key = binascii.unhexlify(os.getenv("SECRET_KEY"))
+ai__services = PPE_AI_Services()
+message_services = MessageServices()
+
 class Subcriber_Service():
-
-    # Decrypt and display image
-    def decrypt_and_show(self, data):
-        full_data = base64.b64decode(data)
-        iv = full_data[:16]
-        ciphertext = full_data[16:]
-
-        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-        decryptor = cipher.decryptor()
-        padded_data = decryptor.update(ciphertext) + decryptor.finalize()
-
-        unpadder = padding.PKCS7(128).unpadder()
-        decoded_image = unpadder.update(padded_data) + unpadder.finalize()
-
-        np_arr = np.frombuffer(base64.b64decode(decoded_image), np.uint8)
-        img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-        # cv2.imshow("Decrypted Image", img)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-        return img
         
 
     # Handle incoming MQTT message
-    def on_message(self, client, userdata, msg):
+    async def on_message(self, client, userdata, msg):
         file_url = msg.payload.decode()
         print(f"Received file URL: {file_url}")
         response = requests.get(file_url)
 
         if response.status_code == 200:
-            decrypted_image = self.decrypt_and_show(response.content)
-            
+            print("Image recieved")
+            encrypted_base64_img = response.content
+            base64_string = encrypted_base64_img.decode("latin-1")
+            ai_response = await ai__services.ai_processing(base64_string)
+            prediction_data = ai__services.generate_response(ai_response)
+            valid_predictions = message_services.get_valid_predictions(prediction_data)
+
+            # save to render database
+
+            # CONNECT TO MESSAGE SERVICE
             # DELETE image after viewing
             filename = file_url.split("/")[-1]
             delete_url = f"https://image-server-ytw4.onrender.com/files/{filename}"
@@ -57,13 +50,15 @@ class Subcriber_Service():
             print("Failed to fetch image from URL.")
 
 
-    def run_subscriber(self):
-        # MQTT setup
-        client = mqtt.Client(client_id="subscriber", transport="websockets", protocol=mqtt.MQTTv311)
-        client.tls_set()
-        client.on_message = self.on_message
-
-        client.connect("mqtt-broker-wk0v.onrender.com", 443, 60)
-        client.subscribe("camera_1")
-        print("Waiting for encrypted image URL...")
-        client.loop_forever()
+    async def run_subscriber(self):
+        async with aiomqtt.Client(
+            hostname="mqtt-broker-wk0v.onrender.com",
+            port=443,
+            transport="websockets",
+            tls_params=aiomqtt.TLSParameters()
+        ) as client:
+            await client.subscribe("camera_1")
+            print("Subscriber connected and waiting for messages...")
+            # THIS loop is the aiomqtt equivalent of paho's loop_start()
+            async for message in client.messages:
+                await self.on_message(message)

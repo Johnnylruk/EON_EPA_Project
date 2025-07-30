@@ -1,17 +1,17 @@
 from dataclasses import dataclass
 
 @dataclass
-class Predictions():
+class Prediction():
+    x1: float
+    y1: str
+    x2: int
+    y2: int
     confidence: float
-    violation: str
-    width: int
-    height: int
-    x: float
-    y: float 
+    violation: float 
 
 @dataclass 
 class Person():
-    person: Predictions
+    person: Prediction
     violations: list
 
 @dataclass

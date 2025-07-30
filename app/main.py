@@ -1,7 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query
 from typing import Optional
-from inference_sdk import InferenceHTTPClient
-from app.services.message_services import MessageServices
 from app.services.image_adjustment_service import ImageAdjustmentService
 from app.services.application_logs_services import ApplicationLogServices
 from app.data_classes.message_result_modal import MessageResult
@@ -9,17 +7,17 @@ from app.data_classes.violation_logs_model  import ViolationMessage
 from app.services.camera_services import CameraServices
 
 app = FastAPI()
-message_services = MessageServices()
 image_adjustment = ImageAdjustmentService()
 application_log_service = ApplicationLogServices()
 camera_services = CameraServices()
 
 @app.get("/camera-api-connection")
-async def get_image_from_camera():
+def get_image_from_camera():
         """
             camera api connection sends image upon motion detection
         """
         camera_services.send_to_publisher()
+
 
 
 ##____________________ GET VIOLATION DATA _________________________##
@@ -35,7 +33,6 @@ async def get_violation_data() -> MessageResult:
         # needs to get logs from render
         
         return ""
-
  
 ##____________________ GET VIOLATION LOGs _________________________##
    
@@ -53,3 +50,4 @@ async def get_violation_log(startDate: Optional[str] = Query(None), endDate: Opt
 
         return violation_logs_message
 
+get_image_from_camera()

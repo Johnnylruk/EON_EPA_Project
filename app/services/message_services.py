@@ -1,103 +1,73 @@
-from app.data_classes.message_result_modal import MessageResult, Predictions, Person
+from app.data_classes.message_result_modal import MessageResult, Prediction, Person
 from app.services.application_logs_services import ApplicationLogServices
 
 application_log_services = ApplicationLogServices()
 
 class MessageServices():
-    async def create_message(self, result: list) -> MessageResult:
+
+    def get_valid_predictions(self, prediction_data):
+        predictions = self.create_prediction_model(prediction_data)
+        valid_predictions = self.map_classes_to_model(predictions)
+
+        message_result = MessageResult(
+            person_detected=valid_predictions
+        )
+        return message_result
+
+    def create_prediction_model(self, prediction_data):
         try:
-            predictions_list = []
-            for item in result:
-                for i in item:
-                    if i == "predictions":
-                         
-                        prediction = item[i]["predictions"]
-                        predictions_list.append(prediction)                      
+            p_dict = dict(prediction_data)
+            print("dict" ,p_dict.values())
+            predictions = []
+            for detections in  p_dict.values():
+                prediction_items =[]
+                for prediction in detections:
+                    x1 = prediction[0]
+                    y1 = prediction[1]
+                    x2 = prediction[2]
+                    y2 = prediction[3]
+                    confidence = prediction[4]
+                    violation = prediction[5]
 
-            if not predictions_list:
-                return "No items in list"
-
-            predictions_by_image = await self.create_prediction_model(predictions_list)
-            persons_detected = await self.get_violation_from_predictions(predictions_by_image)
-
-            result_model = MessageResult(persons_detected)
-                        
-            # ## encryption here
-            
-            return result_model
-
-        except Exception as e:
-            return e
-    
-    # try and use a mapping services
-    async def create_prediction_model(self, predictions_list: list) -> list:
-        try:
-            
-            predictions = []   
-            for item in predictions_list:
-                temp_predictions = []
-                if not item:
-                    print("No items in list")
-                    continue
-                for i in item:
-                    if not i:
-                        print("No items in list")
-                        continue    
-                    
-                    confidence = i["confidence"]
-                    violation = i["class"]
-                    width = i["width"]
-                    height = i["height"]
-                    x = i["x"]
-                    y = i["y"]
-                    
-                    prediction_model = Predictions(
+                    prediction_model = Prediction(
+                        x1,
+                        y1,
+                        x2,
+                        y2,
                         confidence,
-                        violation,
-                        width,
-                        height,
-                        x,
-                        y
+                        violation
                     )
                     if prediction_model.confidence > 0.75:
-                        temp_predictions.append(prediction_model)
-                predictions.append(temp_predictions)
+                        prediction_items.append(prediction_model)
+                predictions.append(prediction_items)
 
             if predictions:
                 best_predictions = max(predictions, key=len)
             else:
                 best_predictions = []
-
             return best_predictions
         except Exception as e:
             return e
 
-    async def get_violation_from_predictions(self, predictions: list) -> list[Person]:
+    
+    async def map_classes_to_model(self, predictions):
         try:
-            object_violations = await self.map_classes_to_model(predictions)   
-            return object_violations
-              
+            object_predictions = [i for i in predictions 
+                                    if (
+                                        i.violation == 0.0 or  
+                                        i.violation == 1.0
+                                    )]
+
+            person_predictions =  [i for i in predictions 
+                                if (
+                                        i.violation == 3.0
+                                    )]
+            persons_detected = await self.map_to_person_detected(object_predictions, person_predictions)
+
+            return persons_detected
         except Exception as e:
             return e
-    
-    async def map_classes_to_model(self, predictions) -> list[Person]:
         
-
-        object_predictions = [i for i in predictions 
-                                if (
-                                    i.violation == "12" or  
-                                    i.violation == "15"
-                                )]
-
-        person_predictions =  [i for i in predictions 
-                               if (
-                                    i.violation == "5"
-                                )]
-
-
-        persons_detected = await self.map_to_person_detected(object_predictions, person_predictions)
-
-        return persons_detected
 
     async def map_to_person_detected(self, object_violations: list, person_predictions: list) -> list[Person]:
         try:
@@ -118,7 +88,12 @@ class MessageServices():
 
                             if is_x_within_bounds and is_y_within_bounds and is_object_area_valid:
                                 objects_detected.append(violation)
-                               
+
+                            
+                            # expand to detect helmet inside person but not on head
+
+                            
+                            # expand to detect person without violation
 
                 people = Person(
                     person= person,
@@ -132,41 +107,43 @@ class MessageServices():
             return people_detected
         except Exception as e:
             return e
+        
 
-
+    
     async def person_class_bounding_box_calc(self, person):
         ## STEP 1
         ####### take person box hieght, width, x and y from Person class
-        person_box_width = person.width
-        person_box_height = person.height
-        person_x = person.x
-        person_y = person.y
-        
-        ## STEP 2
-        ####### create 10% margin around the poerson box 
-        margin_width = person_box_width * 0.1
-        margin_height = person_box_height * 0.1
-        
-        person_width = (person_box_width + margin_width) / 2
-        person_height = (person_box_height + margin_height) / 2
+        print(person.x1)
+        original_height = abs(person.y2 - person.y1) 
+        original_width = abs(person.x2 - person.x1)
 
-        person_x_min = person_x - person_width
-        person_x_max = person_x + person_width
-        person_y_min = person_y - person_height
-        person_y_max = person_y + person_height
+        center_x = (person.x1 + person.x2) / 2
+        center_y = (person.y1 + person.y2) / 2
 
-        person_box_area = (person_box_width + margin_width) * (person_box_height + margin_height)
+        new_width = original_width * 1.10
+        new_height = original_height * 1.10
+
+        half_new_width = new_width / 2
+        half_new_height = new_height / 2
+
+        person_x_min = center_x - half_new_width
+        person_x_max = center_x + half_new_width
+        person_y_min = center_y - half_new_height
+        person_y_max = center_y + half_new_height
+
+        # STEP 4: Calculate the new area
+        person_box_area = new_width * new_height
 
         return (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area)
 
 
-    async def object_class_area_calc(self, object):
+    async def object_class_area_calc(self, violation):
         try:
-            object_width = object.width
-            object_height = object.height
+            violation_height = abs(violation.y2 - violation.y1) 
+            violation_width = abs(violation.x2 - violation.x1)
 
-            object_box_area = object_height * object_width
-            return object_box_area
+            violation_box_area = violation_height * violation_width
+            return violation_box_area
         except Exception as e:
             return e
     

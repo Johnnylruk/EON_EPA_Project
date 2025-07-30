@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 from app.services.mqtt_subscriber_service import Subcriber_Service
 from app.services.mqtt_publisher_service import Publisher_Service
+import base64
 
 publisher_service = Publisher_Service()
 
@@ -29,7 +30,7 @@ class CameraServices():
     def send_to_publisher(self):
         image = self.take_image()
         image_to_bytes = self.encode_image_base64(image)
-        publisher_service.run_publisher(self, image_to_bytes)
+        publisher_service.run_publisher(image_to_bytes)
 
     ##----------- END TESTING FUNCTIONS ---------------##
     def encode_image_base64(self, image):
@@ -38,7 +39,8 @@ class CameraServices():
         ret, buffer = cv2.imencode('.jpg', image, encode_param)
         if ret:
             img_bytes = buffer.tobytes()
-            return img_bytes
+            encoded_image = base64.b64encode(img_bytes)
+            return encoded_image
         else:
             no_image_taken = "no image file found"
             return no_image_taken
