@@ -4,7 +4,7 @@ import os
 import math
 class ApplicationLogServices():
 
-    async def log_violation(self, objects_detected, people_detected):
+    async def log_violation(self, people_detected):
         """
             @params: list, list
 
@@ -16,19 +16,14 @@ class ApplicationLogServices():
             Logs 
             
         """
-        if len(people_detected) > 0 and len(objects_detected) > 0:      
-            severity = "poor"
-            
-        elif len(people_detected) > 0 and len(objects_detected) == 0:
-            severity = "very poor"
+        # find different violation levels
 
-        match(severity):
-            case "poor": 
-                description = f"{len(people_detected)} people detected with incorrect PPE"
-            
-            case "very poor":
-                description = "Person detected without PPE"
+        # whether helmet is on head or not class as no helmet
+        # whether person is wearing ppe
+        # map classes to names
+        # write message to data base
 
+        # put this for loop in a servicesto connect to repo
         violation_log_list = []
         for obj in objects_detected:
             violation_logs = ViolationLogs(
@@ -80,5 +75,5 @@ class ApplicationLogServices():
         else:
             os.makedirs(folder_path, exist_ok=True)
 
-
+    
         

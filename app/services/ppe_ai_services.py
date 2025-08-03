@@ -8,6 +8,7 @@ load_dotenv()
 LOCAL_HOST = os.getenv("local_host")
 TEST_ENV = os.getenv("test_env")
 
+
 class PPE_AI_Services():
     def __init__(self):
         self.url = f"{LOCAL_HOST}/predict"

@@ -1,7 +1,9 @@
 from app.data_classes.message_result_modal import MessageResult, Prediction, Person
 from app.services.application_logs_services import ApplicationLogServices
+from app.services.face_detect_ai_services import Face_Detection_AI
 
 application_log_services = ApplicationLogServices()
+face_detection_ai = Face_Detection_AI()
 
 class MessageServices():
 
@@ -80,28 +82,22 @@ class MessageServices():
                             (person_x_min, person_x_max, person_y_min, person_y_max, person_box_area) = await self.person_class_bounding_box_calc(person)
                             
                             ## OBJECT CLASS AREA CALC
-                            object_box_area = await self.object_class_area_calc(violation)
+                            violation_box_area = await self.object_class_area_calc(violation)
 
                             is_x_within_bounds = violation.x >= person_x_min and violation.x <= person_x_max
                             is_y_within_bounds = violation.y >= person_y_min and violation.y <= person_y_max
-                            is_object_area_valid = object_box_area <= person_box_area
-
-                            if is_x_within_bounds and is_y_within_bounds and is_object_area_valid:
+                            is_violation_area_valid = violation_box_area <= person_box_area
+                                                        
+                            if is_x_within_bounds and is_y_within_bounds and is_violation_area_valid:
                                 objects_detected.append(violation)
-
-                            
-                            # expand to detect helmet inside person but not on head
-
-                            
-                            # expand to detect person without violation
-
+                                
                 people = Person(
                     person= person,
                     violations=objects_detected
                 )
                 people_detected.append(people)
                 
-                await self.application_log_violation(people_detected, objects_detected)
+                await self.application_log_violation(people_detected)
                 
 
             return people_detected

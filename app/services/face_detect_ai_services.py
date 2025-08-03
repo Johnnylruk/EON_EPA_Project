@@ -8,6 +8,6 @@ class Face_Detection_AI():
         model = YOLO('./face_detection_model/yolov8n-face.pt') 
 
         # Run detection
-        results = model()
+        results = model(image_file)
 
         return results
